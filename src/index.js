@@ -1,5 +1,19 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { App } from './App';
+import { browserHistory } from 'react-router';
+import Root from './containers/Root';
+import configureStore from './store/configureStore';
+import { Map } from 'immutable';
+import { syncHistoryWithStore } from 'react-router-redux';
 
-render(<App />, document.getElementById('root'));
+const initialState = Map();
+
+const store = configureStore(initialState);
+const history = syncHistoryWithStore(browserHistory, store, {
+  selectLocationState: (state) => state.get('router').toJS()
+});
+
+render(
+  <Root store={store} history={history} />,
+  document.getElementById('root')
+);
