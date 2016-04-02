@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 import { List } from 'immutable';
+import Markdown from '../components/Markdown';
 
 class IssueDetail extends Component {
   static propTypes = {
@@ -28,7 +29,7 @@ class IssueDetail extends Component {
     return (
       <div>
         <h1>{issue.get('title')}</h1>
-        <p>{issue.get('body')}</p>
+        <Markdown body={issue.get('body')} />
       </div>
     );
   }
