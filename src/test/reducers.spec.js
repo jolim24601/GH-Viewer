@@ -1,4 +1,4 @@
-import { Map, fromJS } from 'immutable';
+import { List, fromJS } from 'immutable';
 import { expect } from 'chai';
 
 import issues from '../reducers/issues';
@@ -6,13 +6,11 @@ import issues from '../reducers/issues';
 describe('reducers', () => {
   describe('issues', () => {
     it('handles RECEIVE_ISSUES', () => {
-      const initialState = Map();
+      const initialState = List();
       const action = { type: 'RECEIVE_ISSUES', issues: ['IssueOne'] };
       const nextState = issues(initialState, action);
 
-      expect(nextState).to.equal(fromJS({
-        issues: ['IssueOne']
-      }));
+      expect(nextState).to.equal(fromJS(['IssueOne']));
     });
   });
 });

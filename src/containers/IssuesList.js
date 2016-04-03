@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { fetchIssuesByRepo } from '../actions';
 import IssueListItem from '../components/IssueListItem';
 import { List } from 'immutable';
+import './IssuesList.css';
 
 class IssuesList extends Component {
   static propTypes = {
@@ -26,14 +27,16 @@ class IssuesList extends Component {
     const { issues, children } = this.props;
 
     return (
-      <ul>
-        {
-          children ? children :
-          issues.toArray().map((issue) =>
-            <IssueListItem issue={issue} key={issue.get('id')} />
-          )
-        }
-      </ul>
+      <div className="list-container">
+        <ul className="issues-list">
+          {
+            children ? children :
+            issues.toArray().map((issue) =>
+              <IssueListItem issue={issue} key={issue.get('id')} />
+            )
+          }
+        </ul>
+      </div>
     );
   }
 }

@@ -1,0 +1,72 @@
+/* reset */
+html, body, header, nav, h1, a,
+ul, li, strong, main, button, i,
+section, img, div, h2, p, form,
+fieldset, label, input, textarea,
+span, article, footer, time, small {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+  vertical-align: inherit;
+  box-sizing: inherit;
+  background: transparent;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+/* clearfix */
+.group:after {
+  display: table;
+  content: "";
+  clear: both;
+}
+
+/* header */
+header {
+  text-align: center;
+  font-size: 50px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* main */
+main {
+  width: 900px;
+  margin: 0 auto;
+}
+
+
+/* footer */
+footer {
+  font-size: 10px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  width: 25%;
+  margin: auto;
+
+  li {
+    float: left;
+    margin-right: 5px;
+
+    a:hover {
+      color: #4078c0;
+    }
+  }
+};

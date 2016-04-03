@@ -3,6 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 import { List } from 'immutable';
 import Markdown from '../components/Markdown';
+import './IssueDetail.css';
 
 class IssueDetail extends Component {
   static propTypes = {

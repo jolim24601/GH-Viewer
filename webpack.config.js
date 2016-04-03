@@ -1,5 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
+var precss = require('precss');
+var autoprefixer = require('autoprefixer');
 
 module.exports = {
   devtool: 'inline-source-map',
@@ -22,7 +24,14 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel',
         exclude: /node_modules/
+      },
+      {
+          test:   /\.css$/,
+          loader: 'style-loader!css-loader!postcss-loader'
       }
     ]
+  },
+  postcss: function () {
+      return [precss, autoprefixer];
   }
 };
