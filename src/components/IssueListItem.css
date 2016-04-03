@@ -20,8 +20,8 @@ $dark-blue: #2898ff;
 
 .avatar-image {
   width: 80px;
-  height: 80px;
   margin-right: 25px;
+  border-radius: 5px;
 }
 
 .item-container {

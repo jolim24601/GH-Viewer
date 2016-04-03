@@ -22,7 +22,7 @@ export default class IssueHeader extends Component {
       <div className="issue-header">
         <h1>
           <span>{issue.get('title')}</span>
-          <span>{issue.get('number')}</span>
+          <span>{` #${issue.get('number')}`}</span>
         </h1>
 
         <div className="issue-meta">

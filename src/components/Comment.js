@@ -3,6 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { Map } from 'immutable';
 import moment from 'moment';
 import Markdown from './Markdown';
+import './Comment.css';
 
 export default class Comment extends Component {
   static propTypes = {
@@ -20,7 +21,7 @@ export default class Comment extends Component {
     const timeAgo = ` ${moment(comment.get('created_at')).fromNow()}`;
 
     return (
-      <div className="issue-comment">
+      <div className="issue-comment group">
 
         <a className="avatar-link" href={user.get('html_url')}>
           <img className="avatar-image" src={user.get('avatar_url')}></img>
