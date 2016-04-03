@@ -1,35 +1,30 @@
-import fetch from 'isomorphic-fetch';
+import { CALL_API } from '../middleware/api';
 
-export const RECEIVE_ISSUES = 'RECEIVE_ISSUES';
-export const RECEIVE_ISSUE = 'RECEIVE_ISSUE';
-export const RECEIVE_COMMENTS = 'RECEIVE_COMMENTS';
+export const ISSUES_REQUEST = 'ISSUES_REQUEST';
+export const ISSUES_SUCCESS = 'ISSUES_SUCCESS';
+export const ISSUES_FAILURE = 'ISSUES_FAILURE';
 
-function receiveIssues(issues) {
+function fetchIssuesByRepo(owner, repo) {
   return {
-    type: RECEIVE_ISSUES,
-    issues
+    [CALL_API]: {
+      types: [ ISSUES_REQUEST, ISSUES_SUCCESS, ISSUES_FAILURE ],
+      endpoint: `repos/${owner}/${repo}/issues`
+    }
   };
 }
 
-function receiveComments(comments) {
+export function loadIssuesByRepo(owner, repo) {
+  return (dispatch, getState) => {
+    // eventually may want to check the cache here
+
+    return dispatch(fetchIssuesByRepo(owner, repo));
+  };
+}
+
+export const RESET_ERROR_MESSAGE = 'RESET_ERROR_MESSAGE';
+
+export function resetErrorMessage() {
   return {
-    type: RECEIVE_COMMENTS,
-    comments
-  };
-}
-
-export function fetchIssuesByRepo(owner, repo) {
-  return (dispatch) => {
-    return fetch(`https://api.github.com/repos/${owner}/${repo}/issues`)
-            .then((response) => response.json())
-            .then((issues) => dispatch(receiveIssues(issues)));
-  };
-}
-
-export function fetchCommentsByIssue(url) {
-  return (dispatch) => {
-    return fetch(url)
-            .then((response) => response.json())
-            .then((comments) => dispatch(receiveComments(comments)));
+    type: RESET_ERROR_MESSAGE
   };
 }

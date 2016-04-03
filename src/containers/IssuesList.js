@@ -1,16 +1,21 @@
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
-import { fetchIssuesByRepo } from '../actions';
+import { loadIssuesByRepo } from '../actions';
 import IssueListItem from '../components/IssueListItem';
-import { List } from 'immutable';
+import { OrderedMap } from 'immutable';
 import './IssuesList.css';
+
+// trial project, which otherwise would be passed in through route params
+const TRIAL_OWNER = 'npm';
+const TRIAL_REPO = 'npm';
 
 class IssuesList extends Component {
   static propTypes = {
-    issues: PropTypes.instanceOf(List).isRequired,
-    children: PropTypes.node,
-    dispatch: PropTypes.func.isRequired
+    issues: PropTypes.instanceOf(OrderedMap).isRequired,
+    loadIssuesByRepo: PropTypes.func.isRequired,
+    nextPageUrl: PropTypes.string.isRequired,
+    lastPageUrl: PropTypes.string.isRequired
   }
 
   constructor(props) {
@@ -18,9 +23,13 @@ class IssuesList extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch(fetchIssuesByRepo('npm', 'npm'));
+  componentWillMount() {
+    const { loadIssuesByRepo } = this.props;
+    loadIssuesByRepo(TRIAL_OWNER, TRIAL_REPO);
+  }
+
+  componentWillReceiveProps(nextProps) {
+
   }
 
   render() {
@@ -30,20 +39,34 @@ class IssuesList extends Component {
       <div className="list-container">
         <ul className="issues-list">
           {
-            issues.toArray().map((issue) =>
-              <IssueListItem issue={issue} key={issue.get('id')} />
+            issues.valueSeq().map((issue) =>
+              <IssueListItem issue={issue} key={issue.get('number')} />
             )
           }
         </ul>
+
+        <div className="pagination">
+          <ul className="pagination-list">
+            {}
+          </ul>
+        </div>
       </div>
     );
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  const pagination = state.get('pagination');
+  const issues = state.get('issues');
+
+  const nextPageUrl = pagination.get('nextPageUrl');
+  const lastPageUrl = pagination.get('lastPageUrl');
+
   return {
-    issues: state.get('issues')
+    nextPageUrl,
+    lastPageUrl,
+    issues
   };
 }
 
-export default connect(mapStateToProps)(IssuesList);
+export default connect(mapStateToProps, { loadIssuesByRepo })(IssuesList);

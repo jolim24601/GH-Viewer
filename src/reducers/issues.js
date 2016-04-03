@@ -1,13 +1,19 @@
-import { RECEIVE_ISSUES } from '../actions';
-import { List } from 'immutable';
+import { ISSUES_SUCCESS } from '../actions';
+import { OrderedMap } from 'immutable';
 
-const initialState = List();
+const initialState = OrderedMap();
 
 export default (state = initialState, action) => {
-  switch (action.type) {
-    case RECEIVE_ISSUES:
-      return state.merge(action.issues);
-    default:
-      return state;
+
+  if (action.type === ISSUES_SUCCESS) {
+    const response = action.response;
+
+    let issues = response.get('json');
+
+    return issues.reduce((result, issue) => {
+      return result.set(issue.get('number'), issue);
+    }, OrderedMap());
   }
+
+  return state;
 };

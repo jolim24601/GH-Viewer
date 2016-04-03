@@ -1,13 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
-import { List } from 'immutable';
+import { OrderedMap } from 'immutable';
 import Markdown from '../components/Markdown';
 import './IssueDetail.css';
 
 class IssueDetail extends Component {
   static propTypes = {
-    issues: PropTypes.instanceOf(List).isRequired
+    issues: PropTypes.instanceOf(OrderedMap).isRequired
   }
 
   constructor(props) {
@@ -17,15 +17,15 @@ class IssueDetail extends Component {
 
   render() {
     const { issues, params } = this.props;
+    const issue = issues.get(parseInt(params.issueId));
 
-    if (issues.isEmpty()) {
+    if (!issue) {
       return (
-        <div>One moment...</div>
+        <div style={{ textAlign: 'center' }}>
+          Oops! Something went wrong.
+        </div>
       );
     }
-
-    const issue = issues.find((item) =>
-      item.get('number') === parseInt(params.issueId));
 
     return (
       <div>
