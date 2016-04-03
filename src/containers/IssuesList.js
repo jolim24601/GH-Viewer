@@ -30,7 +30,6 @@ class IssuesList extends Component {
       <div className="list-container">
         <ul className="issues-list">
           {
-            children ? children :
             issues.toArray().map((issue) =>
               <IssueListItem issue={issue} key={issue.get('id')} />
             )

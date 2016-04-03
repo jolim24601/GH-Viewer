@@ -7,8 +7,7 @@ import IssueDetail from './containers/IssueDetail';
 export default (
   <Route component={App}>
     <Redirect from="/" to="issues" />
-    <Route path="issues" component={IssuesList}>
-      <Route path=":issueId" component={IssueDetail} />
-    </Route>
+    <Route path="issues" component={IssuesList} />
+    <Route path="issues/:issueId" component={IssueDetail} />
   </Route>
 );
