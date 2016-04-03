@@ -13,12 +13,26 @@ function fetchIssuesByRepo(owner, repo) {
   };
 }
 
-export function loadIssuesByRepo(owner, repo) {
-  return (dispatch, getState) => {
-    // eventually may want to check the cache here
+export const COMMENTS_REQUEST = 'COMMENTS_REQUEST';
+export const COMMENTS_SUCCESS = 'COMMENTS_SUCCESS';
+export const COMMENTS_FAILURE = 'COMMENTS_FAILURE';
 
-    return dispatch(fetchIssuesByRepo(owner, repo));
+function fetchCommentsByIssue(url) {
+  return {
+    [CALL_API]: {
+      types: [ COMMENTS_REQUEST, COMMENTS_SUCCESS, COMMENTS_FAILURE ],
+      endpoint: url
+    }
   };
+}
+
+// could potentially cache results and check here if already prev. loaded
+export function loadIssuesByRepo(owner, repo) {
+  return (dispatch) => dispatch(fetchIssuesByRepo(owner, repo));
+}
+
+export function loadCommentsByIssue(url) {
+  return (dispatch) => dispatch(fetchCommentsByIssue(url));
 }
 
 export const RESET_ERROR_MESSAGE = 'RESET_ERROR_MESSAGE';

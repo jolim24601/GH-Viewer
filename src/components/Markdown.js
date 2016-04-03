@@ -3,7 +3,7 @@ import marked from 'marked';
 import highlight from 'highlight.js';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-export default class MarkdownViewer extends Component {
+export default class Markdown extends Component {
   static propTypes = {
     body: PropTypes.string.isRequired
   }

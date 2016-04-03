@@ -1,13 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
-import { OrderedMap } from 'immutable';
-import Markdown from '../components/Markdown';
+import { OrderedMap, List } from 'immutable';
+import Comment from '../components/Comment';
+import IssueHeader from '../components/IssueHeader';
+import { loadCommentsByIssue } from '../actions';
 import './IssueDetail.css';
 
 class IssueDetail extends Component {
   static propTypes = {
-    issues: PropTypes.instanceOf(OrderedMap).isRequired
+    issues: PropTypes.instanceOf(OrderedMap).isRequired,
+    comments: PropTypes.instanceOf(List).isRequired,
+    loadCommentsByIssue: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -15,10 +19,23 @@ class IssueDetail extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  render() {
-    const { issues, params } = this.props;
-    const issue = issues.get(parseInt(params.issueId));
+  componentWillMount() {
+    const { issues, loadCommentsByIssue } = this.props;
+    const issue = this.getIssueByParams();
+    if (!issue) { return null; }
+    loadCommentsByIssue(issue.get('comments_url'));
+  }
 
+  getIssueByParams() {
+    const { issues, params } = this.props;
+    return issues.get(parseInt(params.issueId));
+  }
+
+  render() {
+    const { comments } = this.props;
+    const issue = this.getIssueByParams();
+
+    // this could be a loader while a fetch is made for a single issue
     if (!issue) {
       return (
         <div style={{ textAlign: 'center' }}>
@@ -28,9 +45,14 @@ class IssueDetail extends Component {
     }
 
     return (
-      <div>
-        <h1>{issue.get('title')}</h1>
-        <Markdown body={issue.get('body')} />
+      <div className="issue-detail">
+        <IssueHeader issue={issue} />
+        <Comment comment={issue} />
+        {
+          comments.valueSeq().map(
+            (comment) => <Comment key={comment.get('id')} comment={comment} />
+          )
+        }
       </div>
     );
   }
@@ -38,8 +60,11 @@ class IssueDetail extends Component {
 
 function mapStateToProps(state) {
   return {
-    issues: state.get('issues')
+    issues: state.get('issues'),
+    comments: state.get('comments')
   };
 };
 
-export default connect(mapStateToProps)(IssueDetail);
+export default connect(mapStateToProps, {
+  loadCommentsByIssue
+})(IssueDetail);
