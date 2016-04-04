@@ -1,6 +1,9 @@
 import fetch from 'isomorphic-fetch';
-import { fromJS } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
+const API_ROOT = 'https://api.github.com/';
+
+// parse response headers from github api for pagination links
 function getPageUrl(response, rel) {
   const link = response.headers.get('link');
   if (!link) {
@@ -12,10 +15,8 @@ function getPageUrl(response, rel) {
     return null;
   }
 
-  return nextLink.split(';')[0].slice(1, -1);
+  return nextLink.split(';')[0].trim().slice(1, -1);
 }
-
-const API_ROOT = 'https://api.github.com/';
 
 export function callApi(endpoint) {
   const fullUrl = (endpoint.indexOf(API_ROOT) === -1) ? API_ROOT + endpoint : endpoint;
@@ -24,10 +25,25 @@ export function callApi(endpoint) {
           .then(
             (response) => response.json().then((json) => ({ json, response }))
           ).then(({ json, response }) => {
-            const nextPageUrl = getPageUrl(response, 'next');
-            const lastPageUrl = getPageUrl(response, 'last');
+            if (!response.ok) {
+              return Promise.reject(json);
+            }
 
-            return fromJS({ json, nextPageUrl, lastPageUrl });
+            let pageUrls = Map({
+              nextPageUrl: getPageUrl(response, 'next'),
+              lastPageUrl: getPageUrl(response, 'last'),
+              firstPageUrl: getPageUrl(response, 'first'),
+              prevPageUrl: getPageUrl(response, 'prev'),
+            });
+            // Map.set('nextPageUrl', getPageUrl(response, 'next'));
+            // Map.set('lastPageUrl', getPageUrl(response, 'last'));
+            // Map.set('firstPageUrl', getPageUrl(response, 'first'));
+            // Map.set('prevPageUrl', getPageUrl(response, 'prev'));
+
+            return fromJS({
+              json,
+              pageUrls
+            });
           });
 }
 

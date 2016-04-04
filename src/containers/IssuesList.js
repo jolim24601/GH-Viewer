@@ -3,19 +3,15 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 import { loadIssuesByRepo } from '../actions';
 import IssueListItem from '../components/IssueListItem';
-import { OrderedMap } from 'immutable';
+import PaginationList from '../components/PaginationList';
+import { OrderedMap, Map } from 'immutable';
 import './IssuesList.css';
-
-// trial project, which otherwise would be passed in through route params
-const TRIAL_OWNER = 'npm';
-const TRIAL_REPO = 'npm';
 
 class IssuesList extends Component {
   static propTypes = {
     issues: PropTypes.instanceOf(OrderedMap).isRequired,
     loadIssuesByRepo: PropTypes.func.isRequired,
-    nextPageUrl: PropTypes.string.isRequired,
-    lastPageUrl: PropTypes.string.isRequired
+    pageUrls: PropTypes.instanceOf(Map).isRequired,
   }
 
   constructor(props) {
@@ -25,15 +21,17 @@ class IssuesList extends Component {
 
   componentWillMount() {
     const { loadIssuesByRepo } = this.props;
-    loadIssuesByRepo(TRIAL_OWNER, TRIAL_REPO);
-  }
 
-  componentWillReceiveProps(nextProps) {
-
+    // trial project set as default args, otherwise would be passed in through route params
+    loadIssuesByRepo(undefined, undefined);
   }
 
   render() {
-    const { issues, children } = this.props;
+    const {
+      issues,
+      children,
+      pageUrls
+     } = this.props;
 
     return (
       <div className="list-container">
@@ -46,9 +44,7 @@ class IssuesList extends Component {
         </ul>
 
         <div className="pagination">
-          <ul className="pagination-list">
-            {}
-          </ul>
+          <PaginationList pageUrls={pageUrls} />
         </div>
       </div>
     );
@@ -59,12 +55,10 @@ function mapStateToProps(state, ownProps) {
   const pagination = state.get('pagination');
   const issues = state.get('issues');
 
-  const nextPageUrl = pagination.get('nextPageUrl');
-  const lastPageUrl = pagination.get('lastPageUrl');
+  const pageUrls = pagination.get('pageUrls');
 
   return {
-    nextPageUrl,
-    lastPageUrl,
+    pageUrls,
     issues
   };
 }

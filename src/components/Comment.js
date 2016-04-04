@@ -3,7 +3,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { Map } from 'immutable';
 import moment from 'moment';
 import Markdown from './Markdown';
-import './Comment.css';
 
 export default class Comment extends Component {
   static propTypes = {

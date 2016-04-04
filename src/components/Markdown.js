@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import marked from 'marked';
+import React, {Component, PropTypes} from 'react';
+import marked, {Renderer} from 'marked';
 import highlight from 'highlight.js';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
@@ -15,13 +15,24 @@ export default class Markdown extends Component {
     marked.setOptions({
       gfm: true,
       tables: true,
-      breaks: false,
+      breaks: true,
       pedantic: false,
       sanitize: true,
       smartLists: true,
       smartypants: false,
-      highlight: (code) => highlight.highlightAuto(code).value
+      renderer: this.highlightRenderer()
     });
+  }
+
+  highlightRenderer() {
+    const renderer = new Renderer();
+    renderer.code = (code) => {
+      const highlighted = highlight.highlightAuto(code).value;
+      // Render the highlighted code with `hljs` class.
+      return `<pre><code class="hljs">${highlighted}</code></pre>`;
+    };
+
+    return renderer;
   }
 
   renderMarkdown(text) {
@@ -29,8 +40,10 @@ export default class Markdown extends Component {
   }
 
   render() {
-    const { body } = this.props;
+    const {body} = this.props;
 
-    return <div dangerouslySetInnerHTML={{ __html: this.renderMarkdown(body) }} />;
+    return <div className="markdown-text" dangerouslySetInnerHTML={{
+      __html: this.renderMarkdown(body)
+    }}/>;
   }
 }

@@ -1,4 +1,4 @@
-import { ISSUES_SUCCESS } from '../actions';
+import { ISSUES_SUCCESS, ISSUE_SUCCESS } from '../actions';
 import { OrderedMap } from 'immutable';
 
 const initialState = OrderedMap();
@@ -13,6 +13,14 @@ export default (state = initialState, action) => {
     return issues.reduce((result, issue) => {
       return result.set(issue.get('number'), issue);
     }, OrderedMap());
+  }
+
+  if (action.type === ISSUE_SUCCESS) {
+    const response = action.response;
+
+    let issue = response.get('json');
+
+    return OrderedMap().set(issue.get('number'), issue);
   }
 
   return state;

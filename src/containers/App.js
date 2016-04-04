@@ -9,7 +9,7 @@ import './App.css';
 class App extends Component {
   static propTypes = {
     children: PropTypes.node,
-    errorMessage: PropTypes.string,
+    error: PropTypes.string,
     resetErrorMessage: PropTypes.func.isRequired
   }
 
@@ -24,17 +24,17 @@ class App extends Component {
   }
 
   renderErrorMessage() {
-    const { errorMessage } = this.props;
-    if (!errorMessage) {
+    const { error } = this.props;
+    if (!error) {
       return null;
     }
 
     return (
-      <p style={{ backgroundColor: '#e99', padding: 10 }}>
-        <b>{errorMessage}</b>
+      <p className="error-bar">
+        <b>{error}</b>
         {' '}
         (<a href="#"
-            onClick={this.handleDismissClick}>
+            onClick={this.handleDismissClick.bind(this)}>
           Dismiss
         </a>)
       </p>
@@ -55,7 +55,7 @@ class App extends Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    errorMessage: state.get('errorMessage')
+    error: state.get('error')
   };
 }
 

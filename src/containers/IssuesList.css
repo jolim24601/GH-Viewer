@@ -1,4 +1,108 @@
+$vine-green: #00bf8f;
+$teal-transparent: rgba(0,191,143,.2);
+$dark-blue: #2898ff;
+
 .list-container {
   margin-left: auto;
   margin-right: auto;
+}
+
+.issue-list-item {
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  margin-bottom: 10px;
+
+  &:hover {
+    background-color: $vine-green;
+    color: white;
+  }
+}
+
+.avatar-link {
+  float: left;
+}
+
+.avatar-image {
+  width: 80px;
+  margin-right: 25px;
+  border-radius: 5px;
+}
+
+.item-container {
+  width: 740px;
+  float: left;
+}
+
+.title-link {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 2px;
+  padding-right: 3px;
+  line-height: 1.2;
+  float: left;
+}
+
+a:hover{
+  color: $dark-blue;
+  text-decoration: underline;
+}
+
+.issue-labels {
+  float: left;
+}
+
+.label {
+  vertical-align: top;
+  display: inline-block;
+  padding: 3px 4px;
+  font-size: 11px;
+  font-weight: bold;
+  border-radius: 2px;
+  line-height: 1;
+  margin: 0 2px;
+}
+
+.issue-meta {
+  font-size: 12px;
+  margin: 5px 0;
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.page-list {
+  display: inline-block;
+  text-align: center;
+
+  li {
+    display: inline;
+
+    a {
+      background-color: white;
+      float: left;
+      padding: 8px 16px;
+      border-top: 1px solid gray;
+      border-right: 1px solid gray;
+      border-bottom: 1px solid gray;
+
+      &:hover {
+        background-color: $vine-green;
+        color: white;
+      }
+    }
+
+    &:first-child a {
+      border-left: 1px solid gray;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+    }
+
+    &:last-child a {
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+  }
 }

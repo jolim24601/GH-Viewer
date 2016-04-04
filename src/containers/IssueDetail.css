@@ -1,4 +1,55 @@
+$vine-green: #00bf8f;
+$dark-blue: #2898ff;
+
 .issue-detail {
   margin-left: auto;
   margin-right: auto;
+}
+
+.issue-comment {
+  a {
+    color: $dark-blue;
+  }
+}
+
+.comment-container {
+  position: relative;
+  float: left;
+  width: 740px;
+  border: 2px solid $vine-green;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: white;
+
+  /* tooltip */
+  &:before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    bottom: auto;
+    left: -28px;
+    border-width: 15px 28px 15px 0;
+    border-color: transparent $vine-green;
+    border-style: solid;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 13px;
+    bottom: auto;
+    left: -21px;
+    border-width: 12px 21px 12px 0;
+    border-color: transparent white;
+    border-style: solid;
+  }
+}
+
+.comment-meta {
+  padding: 5px;
+}
+
+.comment-body {
+  overflow-x: scroll;
+  padding: 20px;
 }

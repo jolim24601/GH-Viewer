@@ -5,7 +5,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import IssueListItemMeta from './IssueListItemMeta';
 import IssueLabels from './IssueLabels';
 import Markdown from '../components/Markdown';
-import './IssueListItem.css';
 import marked from 'marked';
 
 export default class IssueListItem extends Component {
@@ -19,6 +18,7 @@ export default class IssueListItem extends Component {
   }
 
   renderIssueBody(body) {
+    // sanitize the links here...
     body = body.length > 140 ? body.slice(0, 140) + '...' : body.slice(0, 140);
     return <Markdown body={body} />;
   }

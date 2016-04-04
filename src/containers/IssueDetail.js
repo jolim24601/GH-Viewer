@@ -4,42 +4,59 @@ import { connect } from 'react-redux';
 import { OrderedMap, List } from 'immutable';
 import Comment from '../components/Comment';
 import IssueHeader from '../components/IssueHeader';
-import { loadCommentsByIssue } from '../actions';
+import { loadCommentsByIssue, loadIssueByRepo } from '../actions';
 import './IssueDetail.css';
 
 class IssueDetail extends Component {
   static propTypes = {
     issues: PropTypes.instanceOf(OrderedMap).isRequired,
     comments: PropTypes.instanceOf(List).isRequired,
+    loadIssueByRepo: PropTypes.func.isRequired,
     loadCommentsByIssue: PropTypes.func.isRequired
   }
 
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+    this.state = { commentsFetched: false };
   }
 
   componentWillMount() {
-    const { issues, loadCommentsByIssue } = this.props;
-    const issue = this.getIssueByParams();
-    if (!issue) { return null; }
-    loadCommentsByIssue(issue.get('comments_url'));
+    const { loadIssueByRepo, params } = this.props;
+
+    // trial project set as default args, otherwise would be passed in through route params
+    loadIssueByRepo(undefined, undefined, params.issueId);
   }
 
-  getIssueByParams() {
-    const { issues, params } = this.props;
+  componentWillReceiveProps(nextProps) {
+    const { comments, loadCommentsByIssue } = nextProps;
+    const issue = this.getIssueByParams(nextProps);
+
+    if (issue && issue.get('comments') !== comments.size
+        && !this.state.commentsFetched) {
+
+      this.setState(
+        { commentsFetched: true },
+        loadCommentsByIssue(issue.get('comments_url'))
+      );
+    }
+  }
+
+  getIssueByParams(props) {
+    const { issues, params } = props;
+
     return issues.get(parseInt(params.issueId));
   }
 
   render() {
     const { comments } = this.props;
-    const issue = this.getIssueByParams();
+    const issue = this.getIssueByParams(this.props);
 
-    // this could be a loader while a fetch is made for a single issue
     if (!issue) {
       return (
         <div style={{ textAlign: 'center' }}>
-          Oops! Something went wrong.
+          One moment...
         </div>
       );
     }
@@ -66,5 +83,6 @@ function mapStateToProps(state) {
 };
 
 export default connect(mapStateToProps, {
+  loadIssueByRepo,
   loadCommentsByIssue
 })(IssueDetail);
