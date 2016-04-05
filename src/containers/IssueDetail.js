@@ -4,72 +4,70 @@ import { connect } from 'react-redux';
 import { OrderedMap, List } from 'immutable';
 import Comment from '../components/Comment';
 import IssueHeader from '../components/IssueHeader';
-import { loadCommentsByIssue, loadIssueByRepo } from '../actions';
+import { loadIssueByRepo } from '../actions';
 import './IssueDetail.css';
 
 class IssueDetail extends Component {
   static propTypes = {
     issues: PropTypes.instanceOf(OrderedMap).isRequired,
     comments: PropTypes.instanceOf(List).isRequired,
-    loadIssueByRepo: PropTypes.func.isRequired,
-    loadCommentsByIssue: PropTypes.func.isRequired
+    loadIssueByRepo: PropTypes.func.isRequired
   }
 
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-
-    this.state = { commentsFetched: false };
   }
 
   componentWillMount() {
-    const { loadIssueByRepo, params } = this.props;
+    const { loadIssueByRepo, loadCommentsByIssue, params } = this.props;
 
     // trial project set as default args, otherwise would be passed in through route params
-    loadIssueByRepo(undefined, undefined, params.issueId);
+    loadIssueByRepo(undefined, undefined, parseInt(params.issueId));
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { comments, loadCommentsByIssue } = nextProps;
-    const issue = this.getIssueByParams(nextProps);
+  getIssueByParams() {
+    const { issues, params } = this.props;
+    return issues.get(parseInt(params.issueId));
+  }
 
-    if (issue && issue.get('comments') !== comments.size
-        && !this.state.commentsFetched) {
+  renderIssueHeader() {
+    const issue = this.getIssueByParams();
 
-      this.setState(
-        { commentsFetched: true },
-        loadCommentsByIssue(issue.get('comments_url'))
+    if (issue) {
+      return (
+        <div className="op-issue">
+          <IssueHeader issue={issue} />
+          <Comment comment={issue} />
+        </div>
       );
     }
   }
 
-  getIssueByParams(props) {
-    const { issues, params } = props;
+  renderSpinner() {
+    const { comments } = this.props;
+    const issue = this.getIssueByParams();
 
-    return issues.get(parseInt(params.issueId));
+    if (!issue || issue.get('comments') !== comments.size) {
+      return (
+        <div className="ellipsis">
+        </div>
+      );
+    }
   }
 
   render() {
     const { comments } = this.props;
-    const issue = this.getIssueByParams(this.props);
-
-    if (!issue) {
-      return (
-        <div style={{ textAlign: 'center' }}>
-          One moment...
-        </div>
-      );
-    }
 
     return (
       <div className="issue-detail">
-        <IssueHeader issue={issue} />
-        <Comment comment={issue} />
+        {this.renderIssueHeader()}
         {
           comments.valueSeq().map(
             (comment) => <Comment key={comment.get('id')} comment={comment} />
           )
         }
+        {this.renderSpinner()}
       </div>
     );
   }
@@ -77,12 +75,11 @@ class IssueDetail extends Component {
 
 function mapStateToProps(state) {
   return {
-    issues: state.get('issues'),
+    issues: state.getIn(['issues', 'currentPageIssues']),
     comments: state.get('comments')
   };
 };
 
 export default connect(mapStateToProps, {
-  loadIssueByRepo,
-  loadCommentsByIssue
+  loadIssueByRepo
 })(IssueDetail);

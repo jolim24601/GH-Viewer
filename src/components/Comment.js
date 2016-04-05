@@ -28,7 +28,13 @@ export default class Comment extends Component {
 
         <div className="comment-container">
           <div className="comment-meta">
-            {user.get('login')} commented
+            <span>
+              <a href={user.get('html_url')}>
+                {user.get('login')}
+              </a>
+              {' '}commented
+            </span>
+
             <time datetime={comment.get('created_at')} is="relative-time">
               {timeAgo}
             </time>

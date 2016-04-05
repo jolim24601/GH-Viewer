@@ -10,6 +10,7 @@ class App extends Component {
   static propTypes = {
     children: PropTypes.node,
     error: PropTypes.string,
+    isFetching: PropTypes.bool.isRequired,
     resetErrorMessage: PropTypes.func.isRequired
   }
 
@@ -23,28 +24,38 @@ class App extends Component {
     e.preventDefault();
   }
 
+  renderSpinner() {
+    const { isFetching } = this.props;
+    if (isFetching) {
+      return (
+        <div className="spinner">
+          <div className="loading ellipsis">
+            ONE MOMENT
+          </div>
+        </div>
+      );
+    }
+  }
+
   renderErrorMessage() {
     const { error } = this.props;
-    if (!error) {
-      return null;
+    if (error) {
+      return (
+        <p className="error-bar">
+          <b>{error}</b>
+          <a href="#" onClick={this.handleDismissClick.bind(this)}>
+            {' '}Dismiss
+          </a>
+        </p>
+      );
     }
-
-    return (
-      <p className="error-bar">
-        <b>{error}</b>
-        {' '}
-        (<a href="#"
-            onClick={this.handleDismissClick.bind(this)}>
-          Dismiss
-        </a>)
-      </p>
-    );
   }
 
   render() {
     return (
       <main className="main">
         <Header />
+        {this.renderSpinner()}
         {this.renderErrorMessage()}
         {this.props.children}
         <Footer />
@@ -55,7 +66,8 @@ class App extends Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    error: state.get('error')
+    error: state.get('error'),
+    isFetching: state.getIn(['pagination', 'isFetching'])
   };
 }
 

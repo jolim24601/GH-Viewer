@@ -1,5 +1,4 @@
 $vine-green: #00bf8f;
-$teal-transparent: rgba(0,191,143,.2);
 $dark-blue: #2898ff;
 
 .list-container {
@@ -80,18 +79,20 @@ a:hover{
   li {
     display: inline;
 
-    a {
+    .page-item {
       background-color: white;
       float: left;
       padding: 8px 16px;
       border-top: 1px solid gray;
       border-right: 1px solid gray;
       border-bottom: 1px solid gray;
+      cursor: pointer;
+    }
 
-      &:hover {
-        background-color: $vine-green;
-        color: white;
-      }
+    .page-item:hover, .page-item.active {
+      background-color: $vine-green;
+      color: white;
+      text-decoration: underline;
     }
 
     &:first-child a {
@@ -103,6 +104,16 @@ a:hover{
     &:last-child a {
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
+    }
+
+    .gap {
+      background-color: lightgray;
+      color: gray;
+      float: left;
+      padding: 8px 16px;
+      border-top: 1px solid gray;
+      border-right: 1px solid gray;
+      border-bottom: 1px solid gray;
     }
   }
 }

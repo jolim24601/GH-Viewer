@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
-import { loadIssuesByRepo } from '../actions';
+import { loadIssuesByRepo, loadNextIssues } from '../actions';
 import IssueListItem from '../components/IssueListItem';
 import PaginationList from '../components/PaginationList';
+import queryString from 'query-string';
 import { OrderedMap, Map } from 'immutable';
 import './IssuesList.css';
 
@@ -11,7 +12,8 @@ class IssuesList extends Component {
   static propTypes = {
     issues: PropTypes.instanceOf(OrderedMap).isRequired,
     loadIssuesByRepo: PropTypes.func.isRequired,
-    pageUrls: PropTypes.instanceOf(Map).isRequired,
+    loadNextIssues: PropTypes.func.isRequired,
+    pageUrls: PropTypes.instanceOf(Map).isRequired
   }
 
   constructor(props) {
@@ -20,17 +22,46 @@ class IssuesList extends Component {
   }
 
   componentWillMount() {
-    const { loadIssuesByRepo } = this.props;
-
+    const { loadIssuesByRepo, location } = this.props;
     // trial project set as default args, otherwise would be passed in through route params
-    loadIssuesByRepo(undefined, undefined);
+    loadIssuesByRepo(undefined, undefined, location.query);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // should be doing this on router update, but more coherent to have code within the component
+    const { location, loadNextIssues, loadIssuesByRepo } = this.props;
+
+    const oldPage = parseInt(location.query.page);
+    const nextLocation = nextProps.location;
+    const newPage = parseInt(nextLocation.query.page);
+
+    if (newPage === oldPage + 1) {
+      loadNextIssues();
+    } else if (oldPage !== newPage) {
+      loadIssuesByRepo(undefined, undefined, nextLocation.query);
+    }
+  }
+
+  getLastPageNum() {
+    const { pageUrls, location } = this.props;
+    const url = pageUrls.get('lastPageUrl');
+
+    if (!url) {
+      // must be on last page or there is only one page
+      return parseInt(location.query.page) || 0;
+    }
+
+    const query = queryString.extract(url);
+    const page = queryString.parse(query).page;
+    return parseInt(page);
   }
 
   render() {
     const {
       issues,
       children,
-      pageUrls
+      pageUrls,
+      location
      } = this.props;
 
     return (
@@ -44,7 +75,10 @@ class IssuesList extends Component {
         </ul>
 
         <div className="pagination">
-          <PaginationList pageUrls={pageUrls} />
+          <PaginationList
+            currentPage={location.query.page ? parseInt(location.query.page) : 1}
+            lastPage={this.getLastPageNum()}
+            />
         </div>
       </div>
     );
@@ -52,15 +86,13 @@ class IssuesList extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const pagination = state.get('pagination');
-  const issues = state.get('issues');
+  const pageUrls = state.getIn(['pagination', 'pageUrls']);
+  const issues = state.getIn(['issues', 'currentPageIssues']);
 
-  const pageUrls = pagination.get('pageUrls');
-
-  return {
-    pageUrls,
-    issues
-  };
+  return { pageUrls, issues };
 }
 
-export default connect(mapStateToProps, { loadIssuesByRepo })(IssuesList);
+export default connect(mapStateToProps, {
+  loadIssuesByRepo,
+  loadNextIssues
+})(IssuesList);

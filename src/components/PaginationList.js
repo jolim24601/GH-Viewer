@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { browserHistory } from 'react-router';
-import { Map } from 'immutable';
+import { Link } from 'react-router';
 
 export default class PaginationList extends Component {
   static propTypes = {
-    pageUrls: PropTypes.instanceOf(Map).isRequired
+    currentPage: PropTypes.number.isRequired,
+    lastPage: PropTypes.number.isRequired
   }
 
   constructor(props) {
@@ -13,44 +13,78 @@ export default class PaginationList extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  getLastPageNum(url) {
-    if (!url) {
-      return 0;
-    }
-
-    // find a better way to parse the query string here
-    return parseInt(url.match(/(\d+)(?!.*\d)/)[0]);
+  pageIsTooFar(i, currentPage, lastPage) {
+    return ((i < currentPage - 2 || i > currentPage + 2) &&
+              i > 2);
   }
 
-  renderPageLink(pageNum) {
-    const { pageUrls } = this.props;
-    const nextPageUrl = pageUrls.get('nextPageUrl') || '';
-    return nextPageUrl.slice(0, -1) + pageNum;
+  renderBookend(rel, page) {
+    const { currentPage, lastPage } = this.props;
+    page = page <= 0 ? 1 : page;
+    page = page > lastPage ? lastPage : page;
+
+    return (
+      <li key={rel}>
+        <Link
+          rel={rel.toUpperCase()}
+          to={{ pathname: 'issues', query: { page:  `${page}` } }}
+          className={'page-item'}
+          disabled={page === currentPage || page === lastPage}
+          >
+            {rel}
+        </Link>
+      </li>
+    );
+  }
+
+  renderGapsAndPageLinks(page) {
+    const { currentPage, lastPage } = this.props;
+
+    if (this.pageIsTooFar(page, currentPage, lastPage)) {
+      if (page === currentPage - 3 || page === currentPage + 3) {
+        return <span className="gap">...</span>;
+      }
+    } else {
+      return (
+        <Link
+          to={{ pathname: 'issues', query: { page:  `${page}` } }}
+          className={page === currentPage ? 'page-item active' : 'page-item'}
+          >
+            {page}
+        </Link>
+      );
+    }
   }
 
   renderPageListItems() {
-    const { pageUrls } = this.props;
-    const lastPageNum = this.getLastPageNum(pageUrls.get('lastPageUrl'));
+    const { currentPage, lastPage } = this.props;
 
     let pageItems = [];
-    for (let i=1; i <= lastPageNum; i++) {
-      if (i > 10) { continue; }
+    if (lastPage > 8) {
+      pageItems.push(this.renderBookend('First', 1));
+      pageItems.push(this.renderBookend('Prev', currentPage - 1));
+    }
+
+    for (let i=1; i <= lastPage; i++) {
       pageItems.push(
         <li key={i}>
-          <a href={this.renderPageLink(i)}>{i}</a>
+          {this.renderGapsAndPageLinks(i)}
         </li>
       );
+    }
+
+    if (lastPage > 8) {
+      pageItems.push(this.renderBookend('Next', currentPage + 1));
+      pageItems.push(this.renderBookend('Last', lastPage));
     }
 
     return pageItems;
   }
 
   render() {
-    let pageListItems = this.renderPageListItems();
-
     return (
       <ul className="page-list">
-        {pageListItems}
+        {this.renderPageListItems()}
       </ul>
     );
   }

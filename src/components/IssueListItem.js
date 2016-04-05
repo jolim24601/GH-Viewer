@@ -18,9 +18,18 @@ export default class IssueListItem extends Component {
   }
 
   renderIssueBody(body) {
-    // sanitize the links here...
-    body = body.length > 140 ? body.slice(0, 140) + '...' : body.slice(0, 140);
-    return <Markdown body={body} />;
+    let teaser = body.slice(0, 140);
+
+    // const cleanEndings = ['\w+', '\n'];
+    // let skip = 0, teaser, lastClean;
+    // while (skip <= 140) {
+    //   if (cutoff.match(body[i])) {
+    //     lastClean = i;
+    //   }
+    // }
+
+    body.length > 140 ? teaser += '...' : null;
+    return <Markdown body={teaser} noLinks />;
   }
 
   render() {
@@ -42,7 +51,11 @@ export default class IssueListItem extends Component {
             <IssueLabels labels={issue.get('labels')} />
           </div>
 
-          <IssueListItemMeta id={issue.get('number')} user={user} />
+          <IssueListItemMeta
+            id={issue.get('number')}
+            datetime={issue.get('created_at')}
+            user={user}
+            />
 
           <Link className="description-link" to={`issues/${issue.get('number')}`}>
             <div className="issue-preview">

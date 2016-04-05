@@ -19,13 +19,12 @@ export default class IssueLabels extends Component {
     };
 
     return (
-      <a
+      <span
         key={label.get('name')}
-        href={label.get('url')}
         style={labelStyle}
         className="label">
           {label.get('name')}
-      </a>
+      </span>
     );
   }
 

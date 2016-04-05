@@ -71,6 +71,43 @@ footer {
   }
 }
 
+.spinner {
+  position: fixed;
+  left: 0; bottom: 0; right: 0; top: 0;
+  display: table;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background: white;
+}
+
+.loading {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  color: #47f4a9;
+  font-size: 50px;
+}
+
+@keyframes ellipsis {
+  to {
+    width: 1.25em;
+  }
+}
+
+.ellipsis {
+  text-align: center;
+  
+  &:after {
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: bottom;
+    animation: ellipsis steps(4,end) 750ms infinite;
+    content: "\2026"; /* ascii code for the ellipsis character */
+    width: 0px;
+  }
+}
+
 .error-bar {
   background-color: $error-red;
   padding: 10;

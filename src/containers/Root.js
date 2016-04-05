@@ -13,7 +13,7 @@ export default class Root extends Component {
     const { store, history } = this.props;
     return (
       <Provider store={store}>
-        <Router history={history} routes={routes} />
+        <Router onUpdate={() => window.scrollTo(0, 0)} routes={routes} history={history} />
       </Provider>
     );
   }

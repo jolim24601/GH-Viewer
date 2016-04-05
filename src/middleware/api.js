@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import qwest from 'qwest';
 import { Map, fromJS } from 'immutable';
 
 const API_ROOT = 'https://api.github.com/';
@@ -33,12 +34,8 @@ export function callApi(endpoint) {
               nextPageUrl: getPageUrl(response, 'next'),
               lastPageUrl: getPageUrl(response, 'last'),
               firstPageUrl: getPageUrl(response, 'first'),
-              prevPageUrl: getPageUrl(response, 'prev'),
+              prevPageUrl: getPageUrl(response, 'prev')
             });
-            // Map.set('nextPageUrl', getPageUrl(response, 'next'));
-            // Map.set('lastPageUrl', getPageUrl(response, 'last'));
-            // Map.set('firstPageUrl', getPageUrl(response, 'first'));
-            // Map.set('prevPageUrl', getPageUrl(response, 'prev'));
 
             return fromJS({
               json,
