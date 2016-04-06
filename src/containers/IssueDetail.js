@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { OrderedMap, List } from 'immutable';
 import Comment from '../components/Comment';
 import IssueHeader from '../components/IssueHeader';
-import { loadIssueByRepo } from '../actions';
+import { loadIssueByRepo, fetchUser } from '../actions';
 import './IssueDetail.css';
 
 class IssueDetail extends Component {
@@ -49,10 +49,7 @@ class IssueDetail extends Component {
     const issue = this.getIssueByParams();
 
     if (!issue || issue.get('comments') !== comments.size) {
-      return (
-        <div className="ellipsis">
-        </div>
-      );
+      return <div className="ellipsis"></div>;
     }
   }
 
@@ -81,5 +78,6 @@ function mapStateToProps(state) {
 };
 
 export default connect(mapStateToProps, {
-  loadIssueByRepo
+  loadIssueByRepo,
+  fetchUser
 })(IssueDetail);

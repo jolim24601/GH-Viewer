@@ -1,5 +1,6 @@
 $vine-green: #00bf8f;
 $dark-blue: #2898ff;
+$trans-gray: rgba(0,0,0,0.04);
 
 .issue-detail {
   margin-left: auto;
@@ -52,8 +53,19 @@ $dark-blue: #2898ff;
 .comment-body {
   overflow-x: scroll;
   padding: 20px;
-  
+
   a {
     color: $dark-blue;
   }
+}
+
+.user-mention {
+  color: black;
+  font-weight: bold;
+}
+
+.markdown-text code {
+  background-color: $trans-gray;
+  padding: .2em 0;
+  border-radius: 2px;
 }

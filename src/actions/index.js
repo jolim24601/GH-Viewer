@@ -122,7 +122,7 @@ function fetchIssueByRepo(owner, repo, id) {
 export function loadIssueByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, id) {
   return (dispatch, getState) => {
     const issues = getState().get('issues');
-    const issue = issues.get(id);
+    const issue = issues.getIn(['currentPageIssues', id]);
 
     if (issue) {
       return dispatch(fetchCommentsByIssue(issue.get('comments_url')));

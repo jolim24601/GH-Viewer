@@ -3,8 +3,6 @@ import marked, { Renderer } from 'marked';
 import highlight from 'highlight.js';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import { fetchUser } from '../actions';
-
 export default class Markdown extends Component {
   static propTypes = {
     body: PropTypes.string.isRequired,
@@ -35,37 +33,20 @@ export default class Markdown extends Component {
       return `<pre><code class="hljs">${highlighted}</code></pre>`;
     };
 
+    // remove any links if this is a teaser
     if (this.props.noLinks) {
       renderer.link = (link) => link;
       return renderer;
     }
 
-    // renderer.paragraph = (p) => {
-    //   const tagRegex = /@\w+/;
-    //   let tags = text.match(tagRegex);
-    //
-    //   fetchUser()
-    //     .then(() => {
-    //
-    //     });
-    //   return p.replace(tagRegex, () => {
-    //     return
-    //   });
-    // };
-
     return renderer;
-  }
-
-  renderMarkdown(text) {
-    findAndTagUsers(text);
-    return marked(text);
   }
 
   render() {
     const {body} = this.props;
 
     return <div className="markdown-text" dangerouslySetInnerHTML={{
-      __html: this.renderMarkdown(body)
+      __html: marked(body)
     }}/>;
   }
 }
