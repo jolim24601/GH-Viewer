@@ -47,16 +47,8 @@ $trans-gray: rgba(0,0,0,0.04);
 }
 
 .comment-meta {
-  padding: 5px;
-}
-
-.comment-body {
-  overflow-x: scroll;
-  padding: 20px;
-
-  a {
-    color: $dark-blue;
-  }
+  padding-top: 5px;
+  padding-left: 15px;
 }
 
 .user-mention {
@@ -64,8 +56,23 @@ $trans-gray: rgba(0,0,0,0.04);
   font-weight: bold;
 }
 
-.markdown-text code {
-  background-color: $trans-gray;
-  padding: .2em 0;
-  border-radius: 2px;
+.comment-body {
+  overflow-x: scroll;
+  padding: 20px;
+}
+
+.markdown-text {
+  line-height: 1.6;
+
+  &:empty:not(:focus):before {
+    content: attr(data-text);
+    color: gray;
+    font-style: italic;
+  }
+
+  code {
+    background-color: $trans-gray;
+    padding: .2em 0;
+    border-radius: 2px;
+  }
 }

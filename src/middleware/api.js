@@ -7,14 +7,10 @@ const API_ROOT = 'https://api.github.com/';
 // parse response headers from github api for pagination links
 function getPageUrl(response, rel) {
   const link = response.headers.get('link');
-  if (!link) {
-    return null;
-  }
+  if (!link) return null;
 
   const nextLink = link.split(',').find((s) => s.indexOf(`rel="${rel}"`) > -1);
-  if (!nextLink) {
-    return null;
-  }
+  if (!nextLink) return null;
 
   return nextLink.split(';')[0].trim().slice(1, -1);
 }
@@ -23,25 +19,26 @@ export function callApi(endpoint) {
   const fullUrl = (endpoint.indexOf(API_ROOT) === -1) ? API_ROOT + endpoint : endpoint;
 
   return fetch(fullUrl)
-          .then(
-            (response) => response.json().then((json) => ({ json, response }))
-          ).then(({ json, response }) => {
-            if (!response.ok) {
-              return Promise.reject(json);
-            }
+           .then((response) => response.json()
+             .then((json) => ({ json, response }))
+           )
+           .then(({ json, response }) => {
+             if (!response.ok) {
+               return Promise.reject(json);
+             }
 
-            let pageUrls = Map({
-              nextPageUrl: getPageUrl(response, 'next'),
-              lastPageUrl: getPageUrl(response, 'last'),
-              firstPageUrl: getPageUrl(response, 'first'),
-              prevPageUrl: getPageUrl(response, 'prev')
-            });
+             let pageUrls = Map({
+               nextPageUrl: getPageUrl(response, 'next'),
+               lastPageUrl: getPageUrl(response, 'last'),
+               firstPageUrl: getPageUrl(response, 'first'),
+               prevPageUrl: getPageUrl(response, 'prev')
+             });
 
-            return fromJS({
-              json,
-              pageUrls
-            });
-          });
+             return fromJS({
+               json,
+               pageUrls
+             });
+           });
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.

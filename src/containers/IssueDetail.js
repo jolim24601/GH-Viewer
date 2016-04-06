@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { OrderedMap, List } from 'immutable';
 import Comment from '../components/Comment';
 import IssueHeader from '../components/IssueHeader';
-import { loadIssueByRepo, fetchUser } from '../actions';
+import { loadIssueByRepo } from '../actions';
 import './IssueDetail.css';
 
 class IssueDetail extends Component {
@@ -78,6 +78,5 @@ function mapStateToProps(state) {
 };
 
 export default connect(mapStateToProps, {
-  loadIssueByRepo,
-  fetchUser
+  loadIssueByRepo
 })(IssueDetail);

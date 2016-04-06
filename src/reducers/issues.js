@@ -1,9 +1,4 @@
-import {
-  NEXT_ISSUES_SUCCESS,
-  NEXT_ISSUES_LOADED,
-  ISSUES_SUCCESS,
-  ISSUE_SUCCESS } from '../actions';
-
+import * as ActionTypes from '../actions';
 import { Map, OrderedMap } from 'immutable';
 
 const initialState = Map({
@@ -11,33 +6,52 @@ const initialState = Map({
   nextPageIssues: OrderedMap()
 });
 
+function replaceNullBodies(issues) {
+  return issues.map((issue) => {
+    return issue.set('body', issue.get('body') || '');
+  });
+}
+
+function mapIssuesToIndex(issues) {
+  return OrderedMap().withMutations((map) => {
+    issues.forEach((issue) => map.set(issue.get('number'), issue));
+  });
+}
+
 export default (state = initialState, action) => {
+  const response = action.response;
+  let issue, issues, issuesByIndex;
+
   switch (action.type) {
-    case ISSUES_SUCCESS:
-    case NEXT_ISSUES_SUCCESS:
-      const issues = action.response.get('json');
+    case ActionTypes.ISSUES_SUCCESS:
+      issues = replaceNullBodies(response.get('json'));
+      issuesByIndex = mapIssuesToIndex(issues);
+      return state.set('currentPageIssues', issuesByIndex);
 
-      // map the issue to its index
-      let om = OrderedMap().withMutations((map) => {
-        issues.forEach((issue) => map.set(issue.get('number'), issue));
-      });
+    case ActionTypes.NEXT_ISSUES_SUCCESS:
+      issues = response.get('json');
+      issuesByIndex = mapIssuesToIndex(issues);
+      return state.set('nextPageIssues', issuesByIndex);
 
-      if (action.type === ISSUES_SUCCESS) {
-        return state.set('currentPageIssues', om);
-      } else {
-        return state.set('nextPageIssues', om);
-      }
-
-    case NEXT_ISSUES_LOADED:
+    case ActionTypes.NEXT_ISSUES_LOAD:
+      issues = response.get('json');
+      issuesByIndex = mapIssuesToIndex(issues);
       // set next page as current from cache
       return state.merge({
         currentPageIssues: state.get('nextPageIssues'),
-        nextPageIssues: om
+        nextPageIssues: issuesByIndex
       });
 
-    case ISSUE_SUCCESS:
-      let issue = action.response.get('json');
+    case ActionTypes.PREVIOUS_ISSUES_REQUEST:
+      // keep next page results as the current page
+      return state.set('nextPageIssues', state.get('currentPageIssues'));
+
+    case ActionTypes.ISSUE_SUCCESS:
+      issue = replaceNullBodies([response.get('json')])[0];
       return state.setIn(['currentPageIssues', issue.get('number')], issue);
+
+    case ActionTypes.USER_MENTION:
+      return state.setIn(['currentPageIssues', response.get('number')], response);
 
     default:
       return state;

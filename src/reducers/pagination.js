@@ -25,7 +25,7 @@ export default (state = initialState, action) => {
     case ActionTypes.ISSUES_FAILURE:
       return state.set('isFetching', false);
 
-    case ActionTypes.ISSUES_UPDATED:
+    case ActionTypes.ISSUES_PAGE_UPDATE:
       return state.set('recentPageNum', action.recentPageNum);
 
     case ActionTypes.NEXT_ISSUES_REQUEST:
@@ -40,7 +40,7 @@ export default (state = initialState, action) => {
     case ActionTypes.NEXT_ISSUES_FAILURE:
       return state.set('quietFetching', false);
 
-    case ActionTypes.NEXT_ISSUES_LOADED:
+    case ActionTypes.NEXT_ISSUES_LOAD:
       return state.set('pageUrls', state.get('nextPageUrls'));
 
     default:
