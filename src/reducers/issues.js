@@ -34,8 +34,6 @@ export default (state = initialState, action) => {
       return state.set('nextPageIssues', issuesByIndex);
 
     case ActionTypes.NEXT_ISSUES_LOAD:
-      issues = response.get('json');
-      issuesByIndex = mapIssuesToIndex(issues);
       // set next page as current from cache
       return state.merge({
         currentPageIssues: state.get('nextPageIssues'),
