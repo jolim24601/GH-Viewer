@@ -18,7 +18,7 @@ export default class Markdown extends Component {
       tables: true,
       breaks: true,
       pedantic: false,
-      sanitize: false,
+      sanitize: true,
       smartLists: true,
       smartypants: false,
       renderer: this.renderer()

@@ -45,29 +45,51 @@ function fetchIssueByRepo(owner, repo, id) {
   };
 }
 
+function fetchIfNextPage(dispatch, getState) {
+  const nextPageUrl = getState().getIn(['pagination', 'pageUrls', 'nextPageUrl']);
+  return nextPageUrl ?  dispatch(fetchNextIssues(nextPageUrl)) : null;
+}
+
+function loadNextIssues(dispatch, getState) {
+  const nextIssues = getState().getIn(['issues', 'nextPageIssues']);
+  dispatch({ type: NEXT_ISSUES_LOAD });
+  return dispatch(fetchIfNextPage);
+}
+
+function cacheCurrentAsNext(dispatch, _getState) {
+  dispatch({ type: PREVIOUS_ISSUES_REQUEST });
+}
+
+function getUserMentionsAndComments(issue) {
+  return (dispatch, getState) => {
+    dispatch(generateUserMentions(issue));
+    return dispatch(loadCommentsWithMentions(issue.get('comments_url')));
+  };
+}
+
 export function loadIssuesByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, query) {
   return (dispatch, getState) => {
-    const recentPageNum = getState().getIn(['pagination', 'recentPageNum']);
-    const pageNum = query.page || '1';
+    let recentPageNum = getState().getIn(['pagination', 'recentPageNum']);
+    let pageNum = query.page || 1;
+    recentPageNum = parseInt(recentPageNum);
+    pageNum = parseInt(pageNum);
 
-    // if user is coming from issue detail get page from cache
-    if (recentPageNum === pageNum) {
-      dispatch({ type: ISSUES_PAGE_UPDATE, recentPageNum: pageNum });
-      return null;
+    // if user is coming from detail page then grab issues from cache
+    if (recentPageNum === pageNum) return null;
+
+    // if user is going to next page get it from cache
+    if (recentPageNum === pageNum - 1) {
+      dispatch(loadNextIssues);
+    } else {
+      dispatch(fetchIssuesByRepo(owner, repo, query)).then((_res) => {
+        // if user is going back cache current page issues as next page
+        if (recentPageNum === pageNum + 1) return dispatch(cacheCurrentAsNext);
+        // else fetch and cache the next page
+        return dispatch(fetchIfNextPage);
+      });
     }
 
-    // if user is going back cache current page issues as next page
-    if (parseInt(recentPageNum) === pageNum + 1) {
-      dispatch({ type: PREVIOUS_ISSUES_REQUEST });
-    }
-
-    return dispatch(fetchIssuesByRepo(owner, repo, query)).then((_res) => {
-      dispatch({ type: ISSUES_PAGE_UPDATE, recentPageNum: pageNum });
-
-      // fetch and cache the next page
-      const nextPageUrl = getState().getIn(['pagination', 'pageUrls', 'nextPageUrl']);
-      return nextPageUrl ?  dispatch(fetchNextIssues(nextPageUrl)) : null;
-    });
+    return dispatch({ type: ISSUES_PAGE_UPDATE, recentPageNum: pageNum });
   };
 }
 
@@ -76,30 +98,12 @@ export function loadIssueByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, id) {
     const issues = getState().get('issues');
     let issue = issues.getIn(['currentPageIssues', id]);
 
-    if (issue) {
-      dispatch(generateUserMentions(issue));
-      return dispatch(loadCommentsWithMentions(issue.get('comments_url')));
-    }
+    if (issue) getUserMentionsAndComments(issue);
 
     // fetch from API if issue is not in cache
     return dispatch(fetchIssueByRepo(owner, repo, id)).then(({ response, type }) => {
       issue = response.get('json');
-      if (issue) {
-        dispatch(generateUserMentions(issue));
-        return dispatch(loadCommentsWithMentions(issue.get('comments_url')));
-      }
+      if (issue) getUserMentionsAndComments(issue);
     });
-  };
-}
-
-// fetches the cached result
-export function loadNextIssues() {
-  return (dispatch, getState) => {
-    const nextIssues = getState().getIn(['issues', 'nextPageIssues']);
-    dispatch({ type: NEXT_ISSUES_LOAD });
-
-    // fetch and cache the next page
-    const nextPageUrl = getState().getIn(['pagination', 'pageUrls', 'nextPageUrl']);
-    return nextPageUrl ? dispatch(fetchNextIssues(nextPageUrl)) : null;
   };
 }

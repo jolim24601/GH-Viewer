@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
-import { loadIssuesByRepo, loadNextIssues } from '../actions';
+import { loadIssuesByRepo } from '../actions';
 import IssueListItem from '../components/IssueListItem';
 import PaginationList from '../components/PaginationList';
 import queryString from 'query-string';
@@ -12,7 +12,6 @@ class IssuesList extends Component {
   static propTypes = {
     issues: PropTypes.instanceOf(OrderedMap).isRequired,
     loadIssuesByRepo: PropTypes.func.isRequired,
-    loadNextIssues: PropTypes.func.isRequired,
     pageUrls: PropTypes.instanceOf(Map).isRequired
   }
 
@@ -23,21 +22,18 @@ class IssuesList extends Component {
 
   componentWillMount() {
     const { loadIssuesByRepo, location } = this.props;
-    // trial project set as default args, otherwise would be passed in through route params
     loadIssuesByRepo(undefined, undefined, location.query);
   }
 
   componentWillReceiveProps(nextProps) {
     // should be doing this on router update, but more coherent to have code within the component
-    const { location, loadNextIssues, loadIssuesByRepo } = this.props;
-
-    const oldPage = parseInt(location.query.page);
+    const { location, loadIssuesByRepo } = this.props;
     const nextLocation = nextProps.location;
-    const newPage = parseInt(nextLocation.query.page);
 
-    if (newPage === oldPage + 1) {
-      loadNextIssues();
-    } else if (oldPage !== newPage) {
+    const oldPage = parseInt(location.query.page) || 1;
+    const newPage = parseInt(nextLocation.query.page) || 1;
+
+    if (oldPage !== newPage) {
       loadIssuesByRepo(undefined, undefined, nextLocation.query);
     }
   }
@@ -93,6 +89,5 @@ function mapStateToProps(state, ownProps) {
 }
 
 export default connect(mapStateToProps, {
-  loadIssuesByRepo,
-  loadNextIssues
+  loadIssuesByRepo
 })(IssuesList);
