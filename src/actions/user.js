@@ -1,13 +1,12 @@
 import { CALL_API } from '../middleware/api';
 import { generateParams, updateTags } from './';
 import { List } from 'immutable';
+import twitter from 'twitter-text';
 
 export const USER_REQUEST = 'USER_REQUEST';
 export const USER_SUCCESS = 'USER_SUCCESS';
 export const USER_FAILURE = 'USER_FAILURE';
 export const USER_MENTION = 'USER_MENTION';
-
-const MENTION_REGEX = /\B@[a-z0-9_-]+/gi;
 
 function fetchUser(username) {
   return {
@@ -21,19 +20,17 @@ function fetchUser(username) {
 function replaceWithMentions(item, mentions) {
   return (dispatch, _getState) => {
     let user, body;
-    for (let i=0; i < mentions.length; i++) {
-      // ping GitHub API to check if this tag is a user
-      dispatch(fetchUser(mentions[i].slice(1)))
+
+    for (let mention of mentions) {
+      dispatch(fetchUser(mention))
         .then((action) => {
           user = action.response.get('json');
           if (!user) return null;
-
-          body = item.get('body').replace(
-            mentions[i],
-            `<a class=user-mention href=${user.get('html_url')}>${mentions[i]}</a>`
-          );
-        })
-        .then(() => dispatch({ type: USER_MENTION, response: item.set('body', body) }));
+          const link = `<a class=user-mention href=${user.get('html_url')}>@${mention}</a>`;
+          body = item.get('body').replace(new RegExp(mention, 'g'), link);
+        }).then(() =>
+          dispatch({ type: USER_MENTION, response: item.set('body', body) })
+        );
     }
   };
 }
@@ -41,7 +38,8 @@ function replaceWithMentions(item, mentions) {
 function findAndUpdateMentions(item) {
   return (dispatch, _getState) => {
     if (!item.get('body')) return null;
-    const mentions = item.get('body').match(MENTION_REGEX);
+
+    const mentions = new Set(twttr.txt.extractMentions(item.get('body')));
     return mentions ? dispatch(replaceWithMentions(item, mentions)) : null;
   };
 }
