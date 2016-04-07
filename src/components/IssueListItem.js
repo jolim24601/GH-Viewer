@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 import { Link } from 'react-router';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import IssueListItemMeta from './IssueListItemMeta';
+import Avatar from './Avatar';
 import IssueLabels from './IssueLabels';
 import Markdown from '../components/Markdown';
 import marked from 'marked';
@@ -37,17 +38,11 @@ export default class IssueListItem extends Component {
   render() {
     const { issue, owner, repo } = this.props;
     const user = issue.get('user');
-    const avatarUrl = `${user.get('avatar_url')}&s=80`;
 
     return (
       <li className="issue-list-item group">
 
-        <div className="avatar-placeholder">
-          <a className="avatar-link" href={user.get('html_url')}>
-            <img src={avatarUrl} className="avatar-image" />
-          </a>
-        </div>
-
+        <Avatar userUrl={user.get('html_url')} avatarUrl={user.get('avatar_url')} />
 
         <div className="item-container">
           <div className="issue-title group">
