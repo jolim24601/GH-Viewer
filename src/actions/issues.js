@@ -2,9 +2,6 @@ import { CALL_API } from '../middleware/api';
 import { loadCommentsWithMentions, generateUserMentions, generateParams } from './index';
 import queryString from 'query-string';
 
-const TRIAL_OWNER = 'npm';
-const TRIAL_REPO = 'npm';
-
 export const ISSUE_REQUEST = 'ISSUE_REQUEST';
 export const ISSUE_SUCCESS = 'ISSUE_SUCCESS';
 export const ISSUE_FAILURE = 'ISSUE_FAILURE';
@@ -67,12 +64,12 @@ function getUserMentionsAndComments(issue) {
   };
 }
 
-export function loadIssuesByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, query) {
+export function loadIssuesByRepo(owner, repo, query) {
   return (dispatch, getState) => {
+    query.page = query.page ? query.page : 1;
     let recentPageNum = getState().getIn(['pagination', 'recentPageNum']);
-    let pageNum = query.page || 1;
     recentPageNum = parseInt(recentPageNum);
-    pageNum = parseInt(pageNum);
+    const pageNum = parseInt(query.page);
 
     // if user is going back cache current page issues as next page
     if (recentPageNum === pageNum) return dispatch(cacheCurrentAsNext);
@@ -81,10 +78,10 @@ export function loadIssuesByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, query) 
     if (recentPageNum === pageNum - 1) {
       dispatch(loadNextIssues);
     } else {
-      dispatch(fetchIssuesByRepo(owner, repo, query)).then((_res) => {
+      dispatch(fetchIssuesByRepo(owner, repo, query)).then((_action) =>
         // fetch and cache the next page
-        return dispatch(fetchIfNextPage);
-      });
+        dispatch(fetchIfNextPage)
+      );
     }
 
     return dispatch({ type: ISSUES_PAGE_UPDATE, recentPageNum: pageNum });
@@ -99,8 +96,8 @@ export function loadIssueByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, id) {
     if (issue) return dispatch(getUserMentionsAndComments(issue));
 
     // fetch from API if issue is not in cache
-    return dispatch(fetchIssueByRepo(owner, repo, id)).then(({ response, type }) => {
-      issue = response.get('json');
+    return dispatch(fetchIssueByRepo(owner, repo, id)).then((action) => {
+      issue = action.response.get('json');
       if (issue) dispatch(getUserMentionsAndComments(issue));
     });
   };

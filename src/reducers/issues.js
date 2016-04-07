@@ -7,6 +7,8 @@ const initialState = Map({
 });
 
 function replaceNullBodies(issues) {
+  issues = issues instanceof Map ? [issues] : issues;
+
   return issues.map((issue) => {
     return issue.set('body', issue.get('body') || '');
   });
@@ -45,7 +47,7 @@ export default (state = initialState, action) => {
       return state.set('nextPageIssues', state.get('currentPageIssues'));
 
     case ActionTypes.ISSUE_SUCCESS:
-      issue = replaceNullBodies([response.get('json')])[0];
+      issue = replaceNullBodies(response.get('json'))[0];
       return state.setIn(['currentPageIssues', issue.get('number')], issue);
 
     case ActionTypes.USER_MENTION:

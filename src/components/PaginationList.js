@@ -5,7 +5,9 @@ import { Link } from 'react-router';
 export default class PaginationList extends Component {
   static propTypes = {
     currentPage: PropTypes.number.isRequired,
-    lastPage: PropTypes.number.isRequired
+    lastPage: PropTypes.number.isRequired,
+    owner: PropTypes.string.isRequired,
+    repo: PropTypes.string.isRequired
   }
 
   constructor(props) {
@@ -18,6 +20,15 @@ export default class PaginationList extends Component {
               i > 2);
   }
 
+  getPath(page) {
+    const { owner, repo } = this.props;
+
+    return {
+      pathname: `/${owner}/${repo}/issues`,
+      query: { page:  `${page}` }
+    };
+  }
+
   renderBookend(rel, page) {
     const { currentPage, lastPage } = this.props;
     page = page <= 0 ? 1 : page;
@@ -26,12 +37,12 @@ export default class PaginationList extends Component {
     return (
       <li key={rel}>
         <Link
+          to={this.getPath(page)}
+          className='page-item'
+          activeClassName='active'
           rel={rel.toUpperCase()}
-          to={{ pathname: 'issues', query: { page:  `${page}` } }}
-          className={'page-item'}
-          disabled={page === currentPage || page === lastPage}
-          >
-            {rel}
+          disabled={page === currentPage || page === lastPage}>
+          {rel}
         </Link>
       </li>
     );
@@ -47,10 +58,10 @@ export default class PaginationList extends Component {
     } else {
       return (
         <Link
-          to={{ pathname: 'issues', query: { page:  `${page}` } }}
-          className={page === currentPage ? 'page-item active' : 'page-item'}
-          >
-            {page}
+          to={this.getPath(page)}
+          className='page-item'
+          activeClassName='active'>
+          {page}
         </Link>
       );
     }
@@ -58,6 +69,7 @@ export default class PaginationList extends Component {
 
   renderPageListItems() {
     const { currentPage, lastPage } = this.props;
+    if (lastPage <= 1) return null;
 
     let pageItems = [];
     if (lastPage > 8) {

@@ -18,7 +18,7 @@ export default class Markdown extends Component {
       tables: true,
       breaks: true,
       pedantic: false,
-      sanitize: false,
+      sanitize: true,
       smartLists: true,
       smartypants: false,
       renderer: this.renderer()
@@ -39,26 +39,8 @@ export default class Markdown extends Component {
       return renderer;
     }
 
-    // renderer.html = (html) => {
-    //   debugger
-    //   return html;
-    // };
-    //
-    // renderer.link = (link, opts, str) => {
-    //   debugger
-    //   return `<a href=${link}>${str}</a>`;
-    // };
-
     return renderer;
   }
-
-  // renderMarkDown(text) {
-  //   return new Promise((resolve, reject) => {
-  //     marked(text, null, (err, content) => {
-  //
-  //     });
-  //   });
-  // }
 
   render() {
     const { body } = this.props;
@@ -67,8 +49,7 @@ export default class Markdown extends Component {
       <div
         className="markdown-text"
         data-text="Nothing here."
-        dangerouslySetInnerHTML={{ __html: marked(body) }}
-        />
+        dangerouslySetInnerHTML={{ __html: marked(body) }} />
     );
   }
 }

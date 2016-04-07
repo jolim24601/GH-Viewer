@@ -9,7 +9,9 @@ import marked from 'marked';
 
 export default class IssueListItem extends Component {
   static propTypes = {
-    issue: PropTypes.instanceOf(Map).isRequired
+    issue: PropTypes.instanceOf(Map).isRequired,
+    owner: PropTypes.string.isRequired,
+    repo: PropTypes.string.isRequired
   }
 
   constructor(props) {
@@ -33,7 +35,7 @@ export default class IssueListItem extends Component {
   }
 
   render() {
-    const { issue } = this.props;
+    const { issue, owner, repo } = this.props;
     const user = issue.get('user');
 
     return (
@@ -45,7 +47,9 @@ export default class IssueListItem extends Component {
 
         <div className="item-container">
           <div className="issue-title group">
-            <Link className="title-link" to={`issues/${issue.get('number')}`}>
+            <Link
+              className="title-link"
+              to={`/${owner}/${repo}/issues/${issue.get('number')}`}>
               {issue.get('title')}
             </Link>
             <IssueLabels labels={issue.get('labels')} />
@@ -54,10 +58,11 @@ export default class IssueListItem extends Component {
           <IssueListItemMeta
             id={issue.get('number')}
             datetime={issue.get('created_at')}
-            user={user}
-            />
+            user={user} />
 
-          <Link className="description-link" to={`issues/${issue.get('number')}`}>
+          <Link
+            className="description-link"
+            to={`/${owner}/${repo}/issues/${issue.get('number')}`}>
             <div className="issue-preview">
               {this.renderIssueBody(issue.get('body'))}
             </div>

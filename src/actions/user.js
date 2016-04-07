@@ -24,8 +24,8 @@ function replaceWithMentions(item, mentions) {
     for (let i=0; i < mentions.length; i++) {
       // ping GitHub API to check if this tag is a user
       dispatch(fetchUser(mentions[i].slice(1)))
-        .then(({ response, _type }) => {
-          user = response.get('json');
+        .then((action) => {
+          user = action.response.get('json');
           if (!user) return null;
 
           body = item.get('body').replace(

@@ -13,7 +13,8 @@ class IssuesList extends Component {
     issues: PropTypes.instanceOf(OrderedMap).isRequired,
     loadIssuesByRepo: PropTypes.func.isRequired,
     pageUrls: PropTypes.instanceOf(Map).isRequired,
-    recentPageNum: PropTypes.number.isRequired
+    recentPageNum: PropTypes.number.isRequired,
+    params: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -22,25 +23,28 @@ class IssuesList extends Component {
   }
 
   componentWillMount() {
-    const { recentPageNum, loadIssuesByRepo, location } = this.props;
+    const { params, recentPageNum, loadIssuesByRepo, location } = this.props;
     const pageNum = parseInt(location.query.page);
 
     // if coming from somewhere else in the app use the most recently loaded page
     if (recentPageNum !== pageNum) {
-      loadIssuesByRepo(undefined, undefined, location.query);
+      loadIssuesByRepo(params.owner, params.repo, location.query);
     }
   }
 
   componentWillReceiveProps(nextProps) {
     // should be doing this on router update, but more coherent to have code within the component
-    const { location, loadIssuesByRepo } = this.props;
+    const { location, loadIssuesByRepo, params } = this.props;
     const nextLocation = nextProps.location;
+    const nextParams = nextProps.params;
 
     const oldPage = parseInt(location.query.page) || 1;
     const newPage = parseInt(nextLocation.query.page) || 1;
 
-    if (oldPage !== newPage) {
-      loadIssuesByRepo(undefined, undefined, nextLocation.query);
+    const diffRepo = (params.owner !== nextParams.owner || params.repo !== nextParams.repo);
+
+    if (oldPage !== newPage || diffRepo) {
+      loadIssuesByRepo(nextParams.owner, nextParams.repo, nextLocation.query);
     }
   }
 
@@ -63,7 +67,8 @@ class IssuesList extends Component {
       issues,
       children,
       pageUrls,
-      location
+      location,
+      params
      } = this.props;
 
     return (
@@ -71,16 +76,19 @@ class IssuesList extends Component {
         <ul className="issues-list">
           {
             issues.valueSeq().map((issue) =>
-              <IssueListItem issue={issue} key={issue.get('number')} />
+              <IssueListItem
+                {...params}
+                issue={issue}
+                key={issue.get('number')} />
             )
           }
         </ul>
 
         <div className="pagination">
           <PaginationList
+            {...params}
             currentPage={location.query.page ? parseInt(location.query.page) : 1}
-            lastPage={this.getLastPageNum()}
-            />
+            lastPage={this.getLastPageNum()} />
         </div>
       </div>
     );

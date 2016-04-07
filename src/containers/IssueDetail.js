@@ -23,7 +23,7 @@ class IssueDetail extends Component {
     const { loadIssueByRepo, loadCommentsByIssue, params } = this.props;
 
     // trial project set as default args, otherwise would be passed in through route params
-    loadIssueByRepo(undefined, undefined, parseInt(params.issueId));
+    loadIssueByRepo(params.owner, params.repo, parseInt(params.issueId));
   }
 
   getIssueByParams() {
