@@ -6,7 +6,8 @@ export default class IssueListItemMeta extends Component {
   static propTypes = {
     id: PropTypes.number.isRequired,
     user: PropTypes.object.isRequired,
-    datetime: PropTypes.string.isRequired
+    datetime: PropTypes.string.isRequired,
+    comments: PropTypes.number.isRequired
   }
 
   constructor(props) {
@@ -15,7 +16,7 @@ export default class IssueListItemMeta extends Component {
   }
 
   render() {
-    const { id, user, datetime, numComments } = this.props;
+    const { id, user, datetime, comments } = this.props;
 
     return (
       <div className="issue-meta">
@@ -24,7 +25,8 @@ export default class IssueListItemMeta extends Component {
           <a href={user.get('html_url')}>
             {' '}{user.get('login')}
           </a>
-          {' '}<TimeAgo datetime={datetime} />
+          {' '}<TimeAgo datetime={datetime} />{' '}
+          &middot;{` ${comments} `} comments
         </span>
       </div>
     );

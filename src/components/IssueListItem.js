@@ -57,6 +57,7 @@ export default class IssueListItem extends Component {
           <IssueListItemMeta
             id={issue.get('number')}
             datetime={issue.get('created_at')}
+            comments={issue.get('comments')}
             user={user} />
 
           <Link
