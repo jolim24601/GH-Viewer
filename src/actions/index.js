@@ -5,7 +5,7 @@ const GITHUB_KEY = process.env.GITHUB_KEY;
 export function generateParams(query) {
   query = query ? query : {};
   query.access_token = GITHUB_KEY;
-
+  
   return `?${queryString.stringify(query)}`;
 }
 

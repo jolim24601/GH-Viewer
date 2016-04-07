@@ -6,11 +6,11 @@ export const COMMENTS_SUCCESS = 'COMMENTS_SUCCESS';
 export const COMMENTS_FAILURE = 'COMMENTS_FAILURE';
 export const RESET_COMMENTS = 'RESET_COMMENTS';
 
-function fetchCommentsByIssue(url) {
+function fetchCommentsByIssue(url, query) {
   return {
     [CALL_API]: {
       types: [ COMMENTS_REQUEST, COMMENTS_SUCCESS, COMMENTS_FAILURE ],
-      endpoint: `${url}${generateParams()}`
+      endpoint: `${url}${generateParams(query)}`
     }
   };
 }
@@ -23,9 +23,12 @@ export function resetComments() {
 
 export function loadCommentsWithMentions(url) {
   return (dispatch, getState) => {
-    return dispatch(fetchCommentsByIssue(url)).then((action) => {
-      const comments = action.response.get('json');
-      return comments ? dispatch(generateUserMentions(comments)) : null;
-    });
+    return dispatch(fetchCommentsByIssue(url, { per_page: 100 }))
+      .then((action) => {
+        const comments = action.response.get('json');
+        if (comments) {
+          dispatch(generateUserMentions(comments));
+        }
+      });
   };
 }

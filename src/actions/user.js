@@ -26,7 +26,9 @@ function replaceWithMentions(item, mentions) {
         .then((action) => {
           user = action.response.get('json');
           if (!user) return null;
-          const link = `<a class=user-mention href=${user.get('html_url')}>@${mention}</a>`;
+          mention = `@${mention}`;
+          const link = `<a class=user-mention href=${user.get('html_url')}>${mention}</a>`;
+          // replaces all instances of this mention
           body = item.get('body').replace(new RegExp(mention, 'g'), link);
         }).then(() =>
           dispatch({ type: USER_MENTION, response: item.set('body', body) })
@@ -38,7 +40,7 @@ function replaceWithMentions(item, mentions) {
 function findAndUpdateMentions(item) {
   return (dispatch, _getState) => {
     if (!item.get('body')) return null;
-
+    // an ES6 set prevents passing the same mention more than once
     const mentions = new Set(twttr.txt.extractMentions(item.get('body')));
     return mentions ? dispatch(replaceWithMentions(item, mentions)) : null;
   };
