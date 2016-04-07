@@ -17,14 +17,17 @@ export default class Comment extends Component {
   render() {
     const { comment } = this.props;
     const user = comment.get('user');
+    const avatarUrl = `${user.get('avatar_url')}&s=80`;
     const timeAgo = ` ${moment(comment.get('created_at')).fromNow()}`;
 
     return (
       <div className="issue-comment group">
 
-        <a className="avatar-link" href={user.get('html_url')}>
-          <img className="avatar-image" src={user.get('avatar_url')}></img>
-        </a>
+        <div className="avatar-placeholder">
+          <a className="avatar-link" href={user.get('html_url')}>
+            <img src={avatarUrl} className="avatar-image" />
+          </a>
+        </div>
 
         <div className="comment-container">
           <div className="comment-meta">

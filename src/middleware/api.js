@@ -1,7 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import qwest from 'qwest';
 import { Map, fromJS } from 'immutable';
-import { Schema, arrayOf, normalize } from 'normalizr';
 
 const API_ROOT = 'https://api.github.com/';
 

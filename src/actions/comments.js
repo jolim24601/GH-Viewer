@@ -4,6 +4,7 @@ import { generateUserMentions, generateParams } from './index';
 export const COMMENTS_REQUEST = 'COMMENTS_REQUEST';
 export const COMMENTS_SUCCESS = 'COMMENTS_SUCCESS';
 export const COMMENTS_FAILURE = 'COMMENTS_FAILURE';
+export const RESET_COMMENTS = 'RESET_COMMENTS';
 
 function fetchCommentsByIssue(url) {
   return {
@@ -11,6 +12,12 @@ function fetchCommentsByIssue(url) {
       types: [ COMMENTS_REQUEST, COMMENTS_SUCCESS, COMMENTS_FAILURE ],
       endpoint: `${url}${generateParams()}`
     }
+  };
+}
+
+export function resetComments() {
+  return {
+    type: RESET_COMMENTS
   };
 }
 

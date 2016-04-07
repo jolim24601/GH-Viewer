@@ -18,14 +18,18 @@ $dark-blue: #2898ff;
   }
 }
 
-.avatar-link {
+.avatar-placeholder {
   float: left;
-}
-
-.avatar-image {
   width: 80px;
+  height: 80px;
   margin-right: 25px;
   border-radius: 5px;
+  background-color: lightgray;
+
+  .avatar-image {
+    border-radius: 5px;
+    height: 80px;
+  }
 }
 
 .item-container {

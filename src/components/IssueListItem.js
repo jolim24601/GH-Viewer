@@ -37,13 +37,17 @@ export default class IssueListItem extends Component {
   render() {
     const { issue, owner, repo } = this.props;
     const user = issue.get('user');
+    const avatarUrl = `${user.get('avatar_url')}&s=80`;
 
     return (
       <li className="issue-list-item group">
 
-        <a className="avatar-link" href={user.get('html_url')}>
-          <img className="avatar-image" src={user.get('avatar_url')}></img>
-        </a>
+        <div className="avatar-placeholder">
+          <a className="avatar-link" href={user.get('html_url')}>
+            <img src={avatarUrl} className="avatar-image" />
+          </a>
+        </div>
+
 
         <div className="item-container">
           <div className="issue-title group">

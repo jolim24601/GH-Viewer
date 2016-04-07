@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { OrderedMap, List } from 'immutable';
 import Comment from '../components/Comment';
 import IssueHeader from '../components/IssueHeader';
-import { loadIssueByRepo } from '../actions';
+import { loadIssueByRepo, resetComments } from '../actions';
 import './IssueDetail.css';
 
 class IssueDetail extends Component {
@@ -24,6 +24,11 @@ class IssueDetail extends Component {
 
     // trial project set as default args, otherwise would be passed in through route params
     loadIssueByRepo(params.owner, params.repo, parseInt(params.issueId));
+  }
+
+  componentWillUnmount() {
+    // clear comments otherwise they will show up for a split second on another issue
+    this.props.resetComments();
   }
 
   getIssueByParams() {
@@ -78,5 +83,6 @@ function mapStateToProps(state) {
 };
 
 export default connect(mapStateToProps, {
-  loadIssueByRepo
+  loadIssueByRepo,
+  resetComments
 })(IssueDetail);
