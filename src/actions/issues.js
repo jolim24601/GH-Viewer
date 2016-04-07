@@ -74,17 +74,15 @@ export function loadIssuesByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, query) 
     recentPageNum = parseInt(recentPageNum);
     pageNum = parseInt(pageNum);
 
-    // if user is coming from detail page then grab issues from cache
-    if (recentPageNum === pageNum) return null;
+    // if user is going back cache current page issues as next page
+    if (recentPageNum === pageNum) return dispatch(cacheCurrentAsNext);
 
     // if user is going to next page get it from cache
     if (recentPageNum === pageNum - 1) {
       dispatch(loadNextIssues);
     } else {
       dispatch(fetchIssuesByRepo(owner, repo, query)).then((_res) => {
-        // if user is going back cache current page issues as next page
-        if (recentPageNum === pageNum + 1) return dispatch(cacheCurrentAsNext);
-        // else fetch and cache the next page
+        // fetch and cache the next page
         return dispatch(fetchIfNextPage);
       });
     }
@@ -98,12 +96,12 @@ export function loadIssueByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, id) {
     const issues = getState().get('issues');
     let issue = issues.getIn(['currentPageIssues', id]);
 
-    if (issue) getUserMentionsAndComments(issue);
+    if (issue) return dispatch(getUserMentionsAndComments(issue));
 
     // fetch from API if issue is not in cache
     return dispatch(fetchIssueByRepo(owner, repo, id)).then(({ response, type }) => {
       issue = response.get('json');
-      if (issue) getUserMentionsAndComments(issue);
+      if (issue) dispatch(getUserMentionsAndComments(issue));
     });
   };
 }

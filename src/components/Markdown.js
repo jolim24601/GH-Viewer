@@ -18,7 +18,7 @@ export default class Markdown extends Component {
       tables: true,
       breaks: true,
       pedantic: false,
-      sanitize: true,
+      sanitize: false,
       smartLists: true,
       smartypants: false,
       renderer: this.renderer()
@@ -35,9 +35,19 @@ export default class Markdown extends Component {
 
     // remove any links if this is a teaser
     if (this.props.noLinks) {
-      renderer.link = (link) => link;
+      renderer.link = (link, opts, str) => str ? str : link;
       return renderer;
     }
+
+    // renderer.html = (html) => {
+    //   debugger
+    //   return html;
+    // };
+    //
+    // renderer.link = (link, opts, str) => {
+    //   debugger
+    //   return `<a href=${link}>${str}</a>`;
+    // };
 
     return renderer;
   }

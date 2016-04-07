@@ -1,5 +1,6 @@
 import { CALL_API } from '../middleware/api';
 import { generateParams, updateTags } from './';
+import { List } from 'immutable';
 
 export const USER_REQUEST = 'USER_REQUEST';
 export const USER_SUCCESS = 'USER_SUCCESS';
@@ -22,18 +23,18 @@ function replaceWithMentions(item, mentions) {
     let user, body;
     for (let i=0; i < mentions.length; i++) {
       // ping GitHub API to check if this tag is a user
-      dispatch(fetchUser(mention[i].slice(1))).then(({ response, _type }) => {
-        user = response.get('json');
-        if (!user) return null;
+      dispatch(fetchUser(mentions[i].slice(1)))
+        .then(({ response, _type }) => {
+          user = response.get('json');
+          if (!user) return null;
 
-        body = body.replace(
-          mention,
-          `<a class=user-mention href=${user.get('html_url')}>${mention}</a>`
-        );
-      });
+          body = item.get('body').replace(
+            mentions[i],
+            `<a class=user-mention href=${user.get('html_url')}>${mentions[i]}</a>`
+          );
+        })
+        .then(() => dispatch({ type: USER_MENTION, response: item.set('body', body) }));
     }
-
-    return dispatch({ type: USER_MENTION, response: item.set('body', body) });
   };
 }
 
@@ -46,7 +47,8 @@ function findAndUpdateMentions(item) {
 }
 
 export function generateUserMentions(items) {
-  items = items instanceof Array ? items : [items];
+  items = items instanceof List ? items : [items];
+
   // replace usernames with links in comment/issue body and dispatch an update
   return (dispatch, _getState) =>
     items.forEach((item) => dispatch(findAndUpdateMentions(item)));

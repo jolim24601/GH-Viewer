@@ -12,7 +12,8 @@ class IssuesList extends Component {
   static propTypes = {
     issues: PropTypes.instanceOf(OrderedMap).isRequired,
     loadIssuesByRepo: PropTypes.func.isRequired,
-    pageUrls: PropTypes.instanceOf(Map).isRequired
+    pageUrls: PropTypes.instanceOf(Map).isRequired,
+    recentPageNum: PropTypes.number.isRequired
   }
 
   constructor(props) {
@@ -21,8 +22,13 @@ class IssuesList extends Component {
   }
 
   componentWillMount() {
-    const { loadIssuesByRepo, location } = this.props;
-    loadIssuesByRepo(undefined, undefined, location.query);
+    const { recentPageNum, loadIssuesByRepo, location } = this.props;
+    const pageNum = parseInt(location.query.page);
+
+    // if coming from somewhere else in the app use the most recently loaded page
+    if (recentPageNum !== pageNum) {
+      loadIssuesByRepo(undefined, undefined, location.query);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -83,9 +89,10 @@ class IssuesList extends Component {
 
 function mapStateToProps(state, ownProps) {
   const pageUrls = state.getIn(['pagination', 'pageUrls']);
+  const recentPageNum = state.getIn(['pagination', 'recentPageNum']);
   const issues = state.getIn(['issues', 'currentPageIssues']);
 
-  return { pageUrls, issues };
+  return { pageUrls, issues, recentPageNum };
 }
 
 export default connect(mapStateToProps, {

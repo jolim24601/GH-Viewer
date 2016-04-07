@@ -16,8 +16,9 @@ function fetchCommentsByIssue(url) {
 
 export function loadCommentsWithMentions(url) {
   return (dispatch, getState) => {
-    return dispatch(fetchCommentsByIssue(url)).then(({ response, _type }) =>
-      response ? dispatch(generateUserMentions) : null
-    );
+    return dispatch(fetchCommentsByIssue(url)).then(({ response, _type }) => {
+      const comments = response.get('json');
+      return comments ? dispatch(generateUserMentions(comments)) : null;
+    });
   };
 }
