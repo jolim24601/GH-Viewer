@@ -15,7 +15,7 @@ export default class IssueLabels extends Component {
   renderLabel(label) {
     let labelStyle = {
       backgroundColor: `#${label.get('color')}`,
-      color: 'white'
+      color: label.get('color') === 'FFFFFF' ? 'black' : 'white'
     };
 
     return (
