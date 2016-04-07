@@ -8,7 +8,7 @@ export const ISSUE_FAILURE = 'ISSUE_FAILURE';
 export const ISSUES_REQUEST = 'ISSUES_REQUEST';
 export const ISSUES_SUCCESS = 'ISSUES_SUCCESS';
 export const ISSUES_FAILURE = 'ISSUES_FAILURE';
-export const ISSUES_PAGE_UPDATE = 'ISSUES_PAGE_UPDATE';
+export const ISSUES_PARAMS_UPDATE = 'ISSUES_PARAMS_UPDATE';
 export const NEXT_ISSUES_REQUEST = 'NEXT_ISSUES_REQUEST';
 export const NEXT_ISSUES_SUCCESS = 'NEXT_ISSUES_SUCCESS';
 export const NEXT_ISSUES_FAILURE = 'NEXT_ISSUES_FAILURE';
@@ -67,24 +67,28 @@ function getUserMentionsAndComments(issue) {
 export function loadIssuesByRepo(owner, repo, query) {
   return (dispatch, getState) => {
     query.page = query.page ? query.page : 1;
-    let recentPageNum = getState().getIn(['pagination', 'recentPageNum']);
-    recentPageNum = parseInt(recentPageNum);
-    const pageNum = parseInt(query.page);
+    const page = parseInt(query.page);
+    let lastPage = getState().getIn(['pagination', 'page']);
+    lastPage = parseInt(lastPage);
+    const lastOwner = getState().getIn(['pagination', 'owner']);
+    const lastRepo = getState().getIn(['pagination', 'repo']);
+    const sameRepo = (owner === lastOwner || repo === lastRepo);
 
-    // if user is going back cache current page issues as next page
-    if (recentPageNum === pageNum) return dispatch(cacheCurrentAsNext);
-
+    // issues are in cache
+    if (lastPage === page && sameRepo) return null;
+    // if user is going to prev page cache current page issues as next page
+    if (lastPage === page + 1 && sameRepo) dispatch(cacheCurrentAsNext);
     // if user is going to next page get it from cache
-    if (recentPageNum === pageNum - 1) {
+    if (lastPage === page - 1 && sameRepo) {
       dispatch(loadNextIssues);
     } else {
-      dispatch(fetchIssuesByRepo(owner, repo, query)).then((_action) =>
+      dispatch(fetchIssuesByRepo(owner, repo, query)).then((_action) => {
         // fetch and cache the next page
-        dispatch(fetchIfNextPage)
-      );
+        if (lastPage !== page + 1 || !sameRepo) dispatch(fetchIfNextPage);
+      });
     }
 
-    return dispatch({ type: ISSUES_PAGE_UPDATE, recentPageNum: pageNum });
+    return dispatch({ type: ISSUES_PARAMS_UPDATE, owner, repo, page });
   };
 }
 

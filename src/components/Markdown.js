@@ -1,7 +1,6 @@
 import React, { Component, PropTypes} from 'react';
 import marked, { Renderer } from 'marked';
 import highlight from 'highlight.js';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class Markdown extends Component {
   static propTypes = {
@@ -11,7 +10,6 @@ export default class Markdown extends Component {
 
   constructor(props) {
     super(props);
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
     marked.setOptions({
       gfm: true,

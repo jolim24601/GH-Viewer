@@ -113,7 +113,7 @@ footer {
 
 .fadein {
   animation-delay: 0.25s;
-  animation: fadein .5s ease 0s forwards;
+  animation: fadein 1s ease 0s forwards;
 }
 
 .avatar-placeholder {

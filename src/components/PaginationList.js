@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { Link } from 'react-router';
 
 export default class PaginationList extends Component {
@@ -12,7 +11,6 @@ export default class PaginationList extends Component {
 
   constructor(props) {
     super(props);
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
   pageIsTooFar(i, currentPage, lastPage) {

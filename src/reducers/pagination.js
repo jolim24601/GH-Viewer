@@ -6,7 +6,9 @@ const initialState = Map({
   quietFetching: false,
   pageUrls: Map(),
   nextPageUrls: Map(),
-  recentPageNum: -1
+  owner: 'npm',
+  repo: 'npm',
+  page: -1
 });
 
 export default (state = initialState, action) => {
@@ -25,8 +27,12 @@ export default (state = initialState, action) => {
     case ActionTypes.ISSUES_FAILURE:
       return state.set('isFetching', false);
 
-    case ActionTypes.ISSUES_PAGE_UPDATE:
-      return state.set('recentPageNum', action.recentPageNum);
+    case ActionTypes.ISSUES_PARAMS_UPDATE:
+      return state.merge({
+        owner: action.owner,
+        repo: action.repo,
+        page: action.page
+      });
 
     case ActionTypes.NEXT_ISSUES_REQUEST:
       return state.set('quietFetching', true);

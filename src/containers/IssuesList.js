@@ -13,7 +13,6 @@ class IssuesList extends Component {
     issues: PropTypes.instanceOf(OrderedMap).isRequired,
     loadIssuesByRepo: PropTypes.func.isRequired,
     pageUrls: PropTypes.instanceOf(Map).isRequired,
-    recentPageNum: PropTypes.number.isRequired,
     params: PropTypes.object.isRequired
   }
 
@@ -23,13 +22,8 @@ class IssuesList extends Component {
   }
 
   componentWillMount() {
-    const { params, recentPageNum, loadIssuesByRepo, location } = this.props;
-    const pageNum = parseInt(location.query.page);
-
-    // if coming from somewhere else in the app use the most recently loaded page
-    if (recentPageNum !== pageNum) {
-      loadIssuesByRepo(params.owner, params.repo, location.query);
-    }
+    const { params, loadIssuesByRepo, location } = this.props;
+    loadIssuesByRepo(params.owner, params.repo, location.query);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -41,9 +35,10 @@ class IssuesList extends Component {
     const oldPage = parseInt(location.query.page) || 1;
     const newPage = parseInt(nextLocation.query.page) || 1;
 
-    const diffRepo = (params.owner !== nextParams.owner || params.repo !== nextParams.repo);
+    // making this check twice, here and in loadissuesByRepo. Can this be fixed?
+    const sameRepo = (params.owner === nextParams.owner || params.repo === nextParams.repo);
 
-    if (oldPage !== newPage || diffRepo) {
+    if (oldPage !== newPage || !sameRepo) {
       loadIssuesByRepo(nextParams.owner, nextParams.repo, nextLocation.query);
     }
   }
@@ -54,7 +49,7 @@ class IssuesList extends Component {
 
     if (!url) {
       // must be on last page or there is only one page
-      return parseInt(location.query.page) || 0;
+      return parseInt(location.query.page) || 1;
     }
 
     const query = queryString.extract(url);
@@ -97,10 +92,9 @@ class IssuesList extends Component {
 
 function mapStateToProps(state, ownProps) {
   const pageUrls = state.getIn(['pagination', 'pageUrls']);
-  const recentPageNum = state.getIn(['pagination', 'recentPageNum']);
   const issues = state.getIn(['issues', 'currentPageIssues']);
 
-  return { pageUrls, issues, recentPageNum };
+  return { pageUrls, issues };
 }
 
 export default connect(mapStateToProps, {
