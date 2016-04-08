@@ -129,3 +129,13 @@ footer {
     height: 80px;
   }
 }
+
+
+/*.label {
+  @if lightness(attr(data-bg)) > 50 {
+    color: #000000;
+  }
+  @else {
+    color: #ffffff;
+  }
+}*/
