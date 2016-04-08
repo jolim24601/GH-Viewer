@@ -21,14 +21,12 @@ export function resetComments() {
   };
 }
 
-export function loadCommentsWithMentions(url) {
+export function loadCommentsWithMentions(issue) {
   return (dispatch, getState) => {
-    return dispatch(fetchCommentsByIssue(url, { per_page: 100 }))
+    return dispatch(fetchCommentsByIssue(issue.get('comments_url'), { per_page: 100 }))
       .then((action) => {
         const comments = action.response.get('json');
-        if (comments) {
-          dispatch(generateUserMentions(comments));
-        }
+        return dispatch(generateUserMentions(comments.push(issue)));
       });
   };
 }

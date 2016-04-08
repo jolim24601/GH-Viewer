@@ -1,7 +1,8 @@
 import { CALL_API } from '../middleware/api';
 import { generateParams, updateTags } from './';
 import { List } from 'immutable';
-import twitter from 'twitter-text';
+
+const MENTION_REGEX = /\B@(?!.*(-){2,}.*)[a-z0-9](?:[a-z0-9-]{0,37}[a-z0-9])?\b/ig;
 
 export const USER_REQUEST = 'USER_REQUEST';
 export const USER_SUCCESS = 'USER_SUCCESS';
@@ -17,39 +18,71 @@ function fetchUser(username) {
   };
 }
 
-function replaceWithMentions(item, mentions) {
-  return (dispatch, _getState) => {
-    let user, body;
+function updateItems(users, items) {
+  return (dispatch, getState) => {
+    users = users.filter((user) => user);
 
+    // map each username to its formatted link, collect usernames to match later
+    let links = {};
+    let usernames = [];
+    users.forEach((user) => {
+      let username = `@${user.get('login')}`;
+      usernames.push(username);
+      links[username] = `<a class=user-mention href=${user.get('html_url')}>${username}</a>`;
+    });
+
+    // replace each issue/comment's body with links
+    items.forEach((item) => {
+      let body = item.get('body')
+                     .replace(new RegExp(usernames.join('|'), 'gi'), (matched) => links[matched]);
+                     
+      // dispatching each update individually once the body is fully updated
+      // would have to separate OP from commments to dispatch all at once
+      if (body === item.get('body')) return null;
+      return dispatch({ type: USER_MENTION, response: item.set('body', body) });
+    });
+  };
+}
+
+
+
+function verifyMentions(mentions, items) {
+  let users = [];
+  return (dispatch, getState) => {
     for (let mention of mentions) {
-      dispatch(fetchUser(mention))
+      dispatch(fetchUser(mention.slice(1)))
         .then((action) => {
-          user = action.response.get('json');
-          if (!user) return null;
-          mention = `@${mention}`;
-          const link = `<a class=user-mention href=${user.get('html_url')}>${mention}</a>`;
-          // replaces all instances of this mention
-          body = item.get('body').replace(new RegExp(mention, 'g'), link);
-        }).then(() =>
-          dispatch({ type: USER_MENTION, response: item.set('body', body) })
-        );
+          if (!action.response) return null;
+          return action.response.get('json');
+        })
+        .then((user) => {
+          users.push(user);
+          // after all fetches are complete, update items with mentions
+          if (users.length === mentions.size) {
+            return dispatch(updateItems(users, items));
+          }
+        });
     }
   };
 }
 
-function findAndUpdateMentions(item) {
-  return (dispatch, _getState) => {
-    if (!item.get('body')) return null;
-    // an ES6 set prevents passing the same mention more than once
-    const mentions = new Set(twttr.txt.extractMentions(item.get('body')));
-    return mentions ? dispatch(replaceWithMentions(item, mentions)) : null;
-  };
+function findMentions(item) {
+  if (!item.get('body')) return null;
+  // an ES6 set prevents passing the same mention more than once
+  return new Set(item.get('body').match(MENTION_REGEX));
 }
 
 export function generateUserMentions(items) {
   items = items instanceof List ? items : [items];
+  let mentions = new Set();
 
-  // replace usernames with links in comment/issue body and dispatch an update
-  return (dispatch, _getState) =>
-    items.forEach((item) => dispatch(findAndUpdateMentions(item)));
+  return (dispatch, _getState) => {
+    items.forEach((item) => {
+      let otherMentions = findMentions(item);
+      // gets the union of the two sets
+      mentions = new Set([...mentions, ...otherMentions]);
+    });
+
+    return dispatch(verifyMentions(mentions, items));
+  };
 }

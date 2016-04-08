@@ -59,8 +59,7 @@ function cacheCurrentAsNext(dispatch, _getState) {
 
 function getUserMentionsAndComments(issue) {
   return (dispatch, getState) => {
-    dispatch(generateUserMentions(issue));
-    return dispatch(loadCommentsWithMentions(issue.get('comments_url')));
+    return dispatch(loadCommentsWithMentions(issue));
   };
 }
 
