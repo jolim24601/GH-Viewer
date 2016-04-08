@@ -35,7 +35,7 @@ function updateItems(users, items) {
     items.forEach((item) => {
       let body = item.get('body')
                      .replace(new RegExp(usernames.join('|'), 'gi'), (matched) => links[matched]);
-                     
+
       // dispatching each update individually once the body is fully updated
       // would have to separate OP from commments to dispatch all at once
       if (body === item.get('body')) return null;
@@ -43,8 +43,6 @@ function updateItems(users, items) {
     });
   };
 }
-
-
 
 function verifyMentions(mentions, items) {
   let users = [];

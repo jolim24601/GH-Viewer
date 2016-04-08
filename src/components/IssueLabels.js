@@ -27,7 +27,7 @@ export default class IssueLabels extends Component {
     return (
       <span
         key={label.get('name')}
-        style={{ backgroundColor: bgColor, color: getContrastYIQ(bgColor) }}
+        style={{ backgroundColor: `#${bgColor}`, color: getContrastYIQ(bgColor) }}
         className="label">
         {label.get('name')}
       </span>
