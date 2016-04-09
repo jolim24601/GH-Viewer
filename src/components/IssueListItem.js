@@ -22,15 +22,14 @@ export default class IssueListItem extends Component {
 
   renderIssueBody(body) {
     let teaser = body.slice(0, 140);
-
-    // const cleanEndings = ['\w+', '\n'];
-    // let skip = 0, teaser, lastClean;
-    // while (skip <= 140) {
-    //   if (cutoff.match(body[i])) {
-    //     lastClean = i;
-    //   }
-    // }
-
+    let lastClean = teaser.length;
+    for (let i=teaser.length; i >=0; i--) {
+      if (teaser[i] === ' ') {
+        lastClean = i;
+        break;
+      }
+    }
+    teaser = teaser.slice(0, lastClean);
     body.length > 140 ? teaser += '...' : null;
     return <Markdown body={teaser} noLinks />;
   }

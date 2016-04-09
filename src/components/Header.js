@@ -1,16 +1,16 @@
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
 import { Link } from 'react-router';
 
-export default class Header extends Component {
-  render() {
-    return (
-      <header>
-        <h1 className="page-header">
-          <Link to="/">
-            YOU'VE GOT ISSUES
-          </Link>
-        </h1>
-      </header>
-    );
-  }
-}
+const Header = () => {
+  return (
+    <header>
+      <h1 className="page-header">
+        <Link to="/">
+          YOU'VE GOT ISSUES
+        </Link>
+      </h1>
+    </header>
+  );
+};
+
+export default Header;

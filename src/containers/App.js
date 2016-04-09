@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { resetErrorMessage } from '../actions';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Spinner from '../components/Spinner';
 import './App.css';
 
 class App extends Component {
@@ -25,16 +26,7 @@ class App extends Component {
   }
 
   renderSpinner() {
-    const { isFetching } = this.props;
-    if (isFetching) {
-      return (
-        <div className="spinner">
-          <div className="loading ellipsis">
-            ONE MOMENT
-          </div>
-        </div>
-      );
-    }
+    if (this.props.isFetching) return <Spinner />;
   }
 
   renderErrorMessage() {

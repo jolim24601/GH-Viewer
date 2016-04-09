@@ -14,10 +14,9 @@ export default (state = initialState, action) => {
       return List();
 
     case USER_MENTION:
-      return state.map((comment) =>
-        comment.get('id') === response.get('id') ? response : comment
-      );
-      
+      // everything but the original parent issue
+      return response.slice(1);
+
     default:
       return state;
   }

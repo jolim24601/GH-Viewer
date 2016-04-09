@@ -1,22 +1,16 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import moment from 'moment';
 
-export default class TimeAgo extends Component {
-  static propTypes = {
-    datetime: PropTypes.string.isRequired
-  }
+const TimeAgo = (props) => {
+  return (
+    <time datetime={props.datetime} is="relative-time">
+      {`${moment(props.datetime).fromNow()}`}
+    </time>
+  );
+};
 
-  constructor(props) {
-    super(props);
-  }
+TimeAgo.propTypes = {
+  datetime: PropTypes.string.isRequired
+};
 
-  render() {
-    const { datetime } = this.props;
-
-    return (
-      <time datetime={datetime} is="relative-time">
-        {`${moment(datetime).fromNow()}`}
-      </time>
-    );
-  }
-}
+export default TimeAgo;

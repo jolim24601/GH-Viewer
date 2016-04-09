@@ -32,15 +32,14 @@ function updateItems(users, items) {
     });
 
     // replace each issue/comment's body with links
-    items.forEach((item) => {
+    items = items.map((item) => {
       let body = item.get('body')
                      .replace(new RegExp(usernames.join('|'), 'gi'), (matched) => links[matched]);
 
-      // dispatching each update individually once the body is fully updated
-      // would have to separate OP from commments to dispatch all at once
-      if (body === item.get('body')) return null;
-      return dispatch({ type: USER_MENTION, response: item.set('body', body) });
+      return item.set('body', body);
     });
+
+    return dispatch({ type: USER_MENTION, response: items });
   };
 }
 

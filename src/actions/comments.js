@@ -26,6 +26,7 @@ export function loadCommentsWithMentions(issue) {
     return dispatch(fetchCommentsByIssue(issue.get('comments_url'), { per_page: 100 }))
       .then((action) => {
         const comments = action.response.get('json');
+        // combine the issue with its comments so it can be done in one sweep
         return dispatch(generateUserMentions(comments.unshift(issue)));
       });
   };

@@ -51,12 +51,10 @@ export default (state = initialState, action) => {
       return state.setIn(['currentPageIssues', issue.get('number')], issue);
 
     case ActionTypes.USER_MENTION:
-      // if not a comment update issue body with mentions
-      if (response.get('number')) {
-        return state.setIn(['currentPageIssues', response.get('number')], response);
-      }
+      // response is the parent issue followed by its comments
+      issue = response.first();
+      return state.setIn(['currentPageIssues', issue.get('number')], issue);
 
-      return state;
     default:
       return state;
   }
