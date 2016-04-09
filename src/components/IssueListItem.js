@@ -8,6 +8,21 @@ import IssueLabels from './IssueLabels';
 import Markdown from '../components/Markdown';
 import marked from 'marked';
 
+function createTeaser(body) {
+  let teaser = body.slice(0, 140);
+  let lastClean = teaser.length;
+  for (let i=teaser.length; i >=0; i--) {
+    if (teaser[i] === ' ') {
+      lastClean = i;
+      break;
+    }
+  }
+
+  teaser = teaser.slice(0, lastClean);
+  body.length > 140 ? teaser += '...' : null;
+  return <Markdown body={teaser} noLinks />;
+}
+
 export default class IssueListItem extends Component {
   static propTypes = {
     issue: PropTypes.instanceOf(Map).isRequired,
@@ -18,20 +33,6 @@ export default class IssueListItem extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-  }
-
-  renderIssueBody(body) {
-    let teaser = body.slice(0, 140);
-    let lastClean = teaser.length;
-    for (let i=teaser.length; i >=0; i--) {
-      if (teaser[i] === ' ') {
-        lastClean = i;
-        break;
-      }
-    }
-    teaser = teaser.slice(0, lastClean);
-    body.length > 140 ? teaser += '...' : null;
-    return <Markdown body={teaser} noLinks />;
   }
 
   render() {
@@ -63,7 +64,7 @@ export default class IssueListItem extends Component {
             className="description-link"
             to={`/${owner}/${repo}/issues/${issue.get('number')}`}>
             <div className="issue-preview">
-              {this.renderIssueBody(issue.get('body'))}
+              {createTeaser(issue.get('body'))}
             </div>
           </Link>
         </div>

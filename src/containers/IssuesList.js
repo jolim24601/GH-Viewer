@@ -18,12 +18,9 @@ class IssuesList extends Component {
 
   constructor(props) {
     super(props);
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-  }
-
-  componentWillMount() {
-    const { params, loadIssuesByRepo, location } = this.props;
+    const { params, loadIssuesByRepo, location } = props;
     loadIssuesByRepo(params.owner, params.repo, location.query);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {

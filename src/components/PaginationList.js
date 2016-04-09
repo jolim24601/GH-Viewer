@@ -15,7 +15,7 @@ export default class PaginationList extends Component {
 
   pageIsTooFar(i, currentPage, lastPage) {
     return ((i < currentPage - 2 || i > currentPage + 2) &&
-              i > 2);
+              i > 2 && i < lastPage);
   }
 
   getPath(page) {

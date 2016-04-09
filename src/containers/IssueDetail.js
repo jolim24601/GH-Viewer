@@ -17,18 +17,12 @@ class IssueDetail extends Component {
 
   constructor(props) {
     super(props);
+    const { loadIssueByRepo, loadCommentsByIssue, params } = props;
+    loadIssueByRepo(params.owner, params.repo, parseInt(params.issueId));
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  componentWillMount() {
-    const { loadIssueByRepo, loadCommentsByIssue, params } = this.props;
-
-    // trial project set as default args, otherwise would be passed in through route params
-    loadIssueByRepo(params.owner, params.repo, parseInt(params.issueId));
-  }
-
   componentWillUnmount() {
-    // clear comments otherwise they will show up for a split second on another issue
     this.props.resetComments();
   }
 
