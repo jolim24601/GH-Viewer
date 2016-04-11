@@ -24,10 +24,10 @@ export function resetComments() {
 export function loadCommentsWithMentions(issue) {
   return (dispatch, getState) => {
     return dispatch(fetchCommentsByIssue(issue.get('comments_url'), { per_page: 100 }))
-      .then((action) => {
-        const comments = action.response.get('json');
+      .then(({ _type, response }) => {
+        const comments = response.get('json');
         // combine the issue with its comments so it can be done in one sweep
-        return dispatch(generateUserMentions(comments.unshift(issue)));
+        return comments ? dispatch(generateUserMentions(comments.unshift(issue))) : null;
       });
   };
 }

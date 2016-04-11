@@ -54,13 +54,7 @@ function loadNextIssues(dispatch, getState) {
 }
 
 function cacheCurrentAsNext(dispatch, _getState) {
-  dispatch({ type: PREVIOUS_ISSUES_REQUEST });
-}
-
-function getUserMentionsAndComments(issue) {
-  return (dispatch, getState) => {
-    return dispatch(loadCommentsWithMentions(issue));
-  };
+  return dispatch({ type: PREVIOUS_ISSUES_REQUEST });
 }
 
 export function loadIssuesByRepo(owner, repo, query) {
@@ -96,12 +90,12 @@ export function loadIssueByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, id) {
     const issues = getState().get('issues');
     let issue = issues.getIn(['currentPageIssues', id]);
 
-    if (issue) return dispatch(getUserMentionsAndComments(issue));
+    return issue ? dispatch(loadCommentsWithMentions(issue)) : null;
 
     // fetch from API if issue is not in cache
-    return dispatch(fetchIssueByRepo(owner, repo, id)).then((action) => {
-      issue = action.response.get('json');
-      if (issue) dispatch(getUserMentionsAndComments(issue));
+    return dispatch(fetchIssueByRepo(owner, repo, id)).then(({ _type, response }) => {
+      const issue = response.get('json');
+      return issue ? dispatch(loadCommentsWithMentions(issue)) : null;
     });
   };
 }

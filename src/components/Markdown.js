@@ -1,4 +1,4 @@
-import React, { Component, PropTypes} from 'react';
+import React, { Component, PropTypes } from 'react';
 import marked, { Renderer } from 'marked';
 import highlight from 'highlight.js';
 

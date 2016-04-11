@@ -40,7 +40,7 @@ Some reasons I chose Redux:
 Some reasons I chose React:
 
 1. It's awesome.
-2. Efficient re-renders with ImmutableJS and shallow object compares using React's pure-render-mixin.
+2. Efficient re-renders with ImmutableJS + shallow object compares using React's pure-render-mixin.
 3. Re-usable components
 
 CSS:
