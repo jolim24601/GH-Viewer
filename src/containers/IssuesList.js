@@ -78,7 +78,7 @@ class IssuesList extends Component {
 
         <div className="pagination">
           <PaginationList
-            {...params}
+            pathname={`/${params.owner}/${params.repo}/issues`}
             currentPage={location.query.page ? parseInt(location.query.page) : 1}
             lastPage={this.getLastPageNum()} />
         </div>

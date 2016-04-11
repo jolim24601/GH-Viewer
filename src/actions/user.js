@@ -65,7 +65,7 @@ function verifyMentions(mentions, items) {
 
 function findMentions(item) {
   if (!item.get('body')) return null;
-  // an ES6 set prevents passing the same mention more than once
+  // prevents passing the same mention more than once
   return new Set(item.get('body').match(MENTION_REGEX));
 }
 
@@ -76,8 +76,8 @@ export function generateUserMentions(items) {
   return (dispatch, _getState) => {
     items.forEach((item) => {
       let otherMentions = findMentions(item);
-      // gets the union of the two sets
-      mentions = new Set([...mentions, ...otherMentions]);
+      otherMentions.forEach((mention) => mentions.add(mention));
+      // mentions = new Set(function *() { yield* mentions; yield* otherMentions; }());
     });
 
     return dispatch(verifyMentions(mentions, items));

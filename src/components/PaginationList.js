@@ -5,8 +5,7 @@ export default class PaginationList extends Component {
   static propTypes = {
     currentPage: PropTypes.number.isRequired,
     lastPage: PropTypes.number.isRequired,
-    owner: PropTypes.string.isRequired,
-    repo: PropTypes.string.isRequired
+    pathname: PropTypes.string.isRequired
   }
 
   constructor(props) {
@@ -19,11 +18,11 @@ export default class PaginationList extends Component {
   }
 
   getPath(page) {
-    const { owner, repo } = this.props;
+    const { pathname } = this.props;
 
     return {
-      pathname: `/${owner}/${repo}/issues`,
-      query: { page:  `${page}` }
+      pathname,
+      query: { page: `${page}` }
     };
   }
 

@@ -12,6 +12,7 @@
   "author": "John Lim <jolim24601 at gmail dot com> (https://github.com/jolim24601)",
   "license": "ISC",
   "dependencies": {
+    "babel-runtime": "^6.6.1",
     "highlight.js": "^9.2.0",
     "immutable": "^3.7.6",
     "isomorphic-fetch": "^2.2.1",
@@ -39,7 +40,6 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-react-hmre": "^1.1.1",
     "babel-preset-stage-0": "^6.5.0",
-    "babel-runtime": "^6.6.1",
     "chai": "^3.5.0",
     "chai-immutable": "^1.5.4",
     "css-loader": "^0.23.1",
