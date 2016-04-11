@@ -31,7 +31,8 @@ export default class IssueHeader extends Component {
             {' '}opened this issue
           </span>
 
-          {' '}<TimeAgo datetime={issue.get('created_at')} />
+          {' '}<TimeAgo datetime={issue.get('created_at')} />{' '}
+          &middot;{` ${issue.get('comments')} `} comments
         </div>
       </div>
     );

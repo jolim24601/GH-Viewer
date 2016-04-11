@@ -48,10 +48,7 @@ function verifyMentions(mentions, items) {
   return (dispatch, getState) => {
     for (let mention of mentions) {
       dispatch(fetchUser(mention.slice(1)))
-        .then(({ _type, response }) => {
-          const user = response.get('json');
-          return user ? user : null;
-        })
+        .then(({ _type, response }) => response ? response.get('json') : null)
         .then((user) => {
           // push null values to keep track of how many fetches have been made
           users.push(user);

@@ -90,7 +90,7 @@ export function loadIssueByRepo(owner = TRIAL_OWNER, repo = TRIAL_REPO, id) {
     const issues = getState().get('issues');
     let issue = issues.getIn(['currentPageIssues', id]);
 
-    return issue ? dispatch(loadCommentsWithMentions(issue)) : null;
+    if (issue) dispatch(loadCommentsWithMentions(issue));
 
     // fetch from API if issue is not in cache
     return dispatch(fetchIssueByRepo(owner, repo, id)).then(({ _type, response }) => {

@@ -11,11 +11,11 @@ import marked from 'marked';
 function createTeaser(body) {
   // only use the first 140 chars
   let teaser = body.slice(0, 140);
-  // only use the first two lines
-  teaser = teaser.split(/\r\n|\r|\n/).slice(0, 2).join('\r\n');
+  // remove newlines to maintain evenness
+  teaser = teaser.split('\r\n\r\n').join(' ');
   // find the last space
   let lastClean = teaser.length;
-  for (let i=teaser.length; i >=0; i--) {
+  for (let i = teaser.length - 1; i >= 0; i--) {
     if (body.length > lastClean
       && (body[lastClean] === '\n' || body[lastClean] === ' ')) {
       break;
@@ -27,7 +27,7 @@ function createTeaser(body) {
   }
 
   teaser = teaser.slice(0, lastClean);
-  body.length > 140 ? teaser += '...' : null;
+  body.length !== teaser.length ? teaser += '...' : null;
   return <Markdown body={teaser} noLinks />;
 }
 
