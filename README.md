@@ -1,4 +1,4 @@
-# GHViewer
+# GH Viewer
 
 ### Summary
 
@@ -52,7 +52,7 @@ Represents CSS as an AST, creating a programmable interface for plugins like aut
 
 *Pagination with caching:*
 
-Inspired by [this]((http://engineering.vine.co/post/121700244802/instant-paginated-results-in-angularjs) post on pagination from Vine's engineering blog, I decided to employ a similar caching method to storing paginated data. By pre-fetching the next page asynchronously, I reduce the time required by the user to view the next list of issues. If the user decides to view a specific issue's comments and go back to the original list, no extra fetch is required. If they decide to visit the previous page, that current page's issues will be cached as the next page.
+Inspired by [this](http://engineering.vine.co/post/121700244802/instant-paginated-results-in-angularjs) post on pagination from Vine's engineering blog, I decided to employ a similar caching method to storing paginated data. By pre-fetching the next page asynchronously, I reduce the time required by the user to view the next list of issues. If the user decides to view a specific issue's comments and go back to the original list, no extra fetch is required. If they decide to visit the previous page, that current page's issues will be cached as the next page.
 
 ```
 // issues are in cache
