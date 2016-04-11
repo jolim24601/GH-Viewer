@@ -14,7 +14,7 @@ export default class PaginationList extends Component {
   }
 
   pageIsTooFar(i, currentPage, lastPage) {
-    return ((i < currentPage - 2 || i > currentPage + 2) &&
+    return ((i < currentPage - 1 || i > currentPage + 1) &&
               i > 2 && i < lastPage);
   }
 
@@ -37,7 +37,7 @@ export default class PaginationList extends Component {
         <Link
           to={this.getPath(page)}
           className='page-item'
-          activeClassName='active'
+          activeClassName='disabled'
           rel={rel.toUpperCase()}
           disabled={page === currentPage || page === lastPage}>
           {rel}

@@ -37,10 +37,7 @@ export default (state = initialState, action) => {
 
     case ActionTypes.NEXT_ISSUES_LOAD:
       // set next page as current from cache
-      return state.merge({
-        currentPageIssues: state.get('nextPageIssues'),
-        nextPageIssues: issuesByIndex
-      });
+      return state.set('currentPageIssues', state.get('nextPageIssues'));
 
     case ActionTypes.PREVIOUS_ISSUES_REQUEST:
       // keep next page results as the current page

@@ -9,9 +9,17 @@ import Markdown from '../components/Markdown';
 import marked from 'marked';
 
 function createTeaser(body) {
+  // only use the first 140 chars
   let teaser = body.slice(0, 140);
+  // only use the first two lines
+  teaser = teaser.split(/\r\n|\r|\n/).slice(0, 2).join('\r\n');
+  // find the last space
   let lastClean = teaser.length;
   for (let i=teaser.length; i >=0; i--) {
+    if (body.length > lastClean
+      && (body[lastClean] === '\n' || body[lastClean] === ' ')) {
+      break;
+    }
     if (teaser[i] === ' ') {
       lastClean = i;
       break;

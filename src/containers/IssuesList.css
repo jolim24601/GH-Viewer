@@ -11,6 +11,7 @@ $dark-blue: #2898ff;
   background-color: white;
   border-radius: 5px;
   margin-bottom: 10px;
+  word-wrap: break-word;
 
   &:hover {
     background-color: $vine-green;
@@ -84,6 +85,12 @@ a:hover{
       background-color: $vine-green;
       color: white;
       text-decoration: underline;
+    }
+
+    .disabled {
+      background-color: lightgray;
+      color: gray;
+      cursor: default;
     }
 
     &:first-child a {
