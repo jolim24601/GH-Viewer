@@ -10,9 +10,7 @@ To run this app in development, do a `npm install` and `npm run start`. The loca
 
 To run the test suite for this app: `npm run test`
 
-Adding your Github API key:
-
-Create a .env file and add the following:
+Open/create .env to add your API key:
 
 ```
 module.exports = {
