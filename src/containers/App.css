@@ -44,7 +44,8 @@ body {
 }
 
 /* header */
-header {
+.page-header {
+  text-transform: uppercase;
   text-align: center;
   font-size: 50px;
   padding-top: 30px;
@@ -52,7 +53,7 @@ header {
 }
 
 /* main */
-main {
+.main {
   width: 900px;
   margin: 0 auto;
 }

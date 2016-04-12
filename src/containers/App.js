@@ -45,13 +45,13 @@ class App extends Component {
 
   render() {
     return (
-      <main className="main">
-        <Header />
+      <div className="main">
+        <Header {...this.props.params} />
         {this.renderSpinner()}
         {this.renderErrorMessage()}
         {this.props.children}
         <Footer />
-      </main>
+      </div>
     );
   }
 }
