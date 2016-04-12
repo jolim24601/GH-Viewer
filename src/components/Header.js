@@ -6,7 +6,7 @@ const Header = (props) => {
     <header>
       <h1 className="page-header">
         <Link to="/">
-          YOU'VE GOT ISSUES: {`${props.owner}/${props.repo}`}
+          you've got issues: {`${props.owner}/${props.repo}`}
         </Link>
       </h1>
     </header>
