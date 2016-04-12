@@ -64,6 +64,10 @@ $trans-gray: rgba(0,0,0,0.04);
 .markdown-text {
   line-height: 1.6;
 
+  p {
+    margin-bottom: 10px;
+  }
+
   &:empty:not(:focus):before {
     content: attr(data-text);
     color: gray;

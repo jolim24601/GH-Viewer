@@ -62,8 +62,8 @@ function verifyMentions(mentions, items) {
 }
 
 function findMentions(item) {
-  if (!item.get('body')) return null;
-  // prevents passing the same mention more than once
+  if (!item.get('body')) return [];
+
   return new Set(item.get('body').match(MENTION_REGEX));
 }
 
@@ -75,7 +75,6 @@ export function generateUserMentions(items) {
     items.forEach((item) => {
       let otherMentions = findMentions(item);
       otherMentions.forEach((mention) => mentions.add(mention));
-      // mentions = new Set(function *() { yield* mentions; yield* otherMentions; }());
     });
 
     return dispatch(verifyMentions(mentions, items));

@@ -6,29 +6,26 @@ import IssueListItemMeta from './IssueListItemMeta';
 import Avatar from './Avatar';
 import IssueLabels from './IssueLabels';
 import Markdown from '../components/Markdown';
-import marked from 'marked';
+import { Lexer } from 'marked';
 
-function createTeaser(body) {
-  // only use the first 140 chars
-  let teaser = body.slice(0, 140);
-  // remove newlines to maintain evenness
-  teaser = teaser.split('\r\n\r\n').join(' ');
-  // find the last space
-  let lastClean = teaser.length;
-  for (let i = teaser.length - 1; i >= 0; i--) {
-    if (body.length > lastClean
-      && (body[lastClean] === '\n' || body[lastClean] === ' ')) {
-      break;
-    }
-    if (teaser[i] === ' ') {
-      lastClean = i;
-      break;
-    }
+function cutString(s, n) {
+  s = s.substr(0, n + 1);
+  s = s.split('\n').join(' ');
+  return s.substr(0, s.lastIndexOf(' '));
+}
+
+function createTeaser(text, limit) {
+  let teaser = '';
+  const blocks = new Lexer().lex(text);
+
+  for (let i = 0; i < blocks.length; i++) {
+    if (blocks[i].type !== 'paragraph' || teaser.length >= 140) continue;
+    if (i > 0) teaser += '\n';
+    teaser += blocks[i].text;
   }
 
-  teaser = teaser.slice(0, lastClean);
-  body.length !== teaser.length ? teaser += '...' : null;
-  return <Markdown body={teaser} noLinks />;
+  teaser = cutString(teaser, 140);
+  return text.length !== teaser.length ? teaser + '...' : teaser;
 }
 
 export default class IssueListItem extends Component {
@@ -72,7 +69,9 @@ export default class IssueListItem extends Component {
             className="description-link"
             to={`/${owner}/${repo}/issues/${issue.get('number')}`}>
             <div className="issue-preview">
-              {createTeaser(issue.get('body'))}
+              <p className="markdown-text" data-text="Nothing here.">
+                {createTeaser(issue.get('body'), 140)}
+              </p>
             </div>
           </Link>
         </div>
